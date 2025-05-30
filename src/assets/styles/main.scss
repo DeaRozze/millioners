@@ -1,0 +1,8 @@
+@use 'reset';
+@use 'variables' as *;
+
+#app {
+  min-height: 100vh;
+  background-color: $color-bg;
+  color: $color-text;
+}

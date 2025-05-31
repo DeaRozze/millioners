@@ -1,14 +1,10 @@
 <script setup>
 import WelcomePage from '@/pages/WelcomePage.vue'
 
-const startGame = () => {
-  console.log('Игра началась!')
-  // Здесь позже будет переход на экран игры
-}
 </script>
 
 <template>
-  <WelcomePage @start-game="startGame" />
+ <WelcomePage />
 </template>
 
 <style lang="scss">

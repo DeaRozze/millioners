@@ -1,0 +1,76 @@
+<script setup>
+import { ref } from 'vue'
+
+const isOpen = ref(false)
+
+const open = () => isOpen.value = true
+const close = () => isOpen.value = false
+
+defineExpose({ open, close })
+</script>
+
+<template>
+  <transition name="fade">
+    <div class="modal-overlay" v-if="isOpen" @click.self="close">
+      <div class="modal-content">
+        <button class="modal-close" @click="close">×</button>
+        <slot></slot>
+      </div>
+    </div>
+  </transition>
+</template>
+
+<style lang='scss' scoped>
+@use '@/assets/styles/variables' as *;
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: $color-bg;
+  padding: $spacing-xl;
+  border-radius: $border-radius;
+  position: relative;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: $box-shadow;
+}
+
+.modal-close {
+  position: absolute;
+  top: $spacing-sm;
+  right: $spacing-sm;
+  font-size: $font-size-xl;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $color-text;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

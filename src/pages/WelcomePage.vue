@@ -1,15 +1,17 @@
 <script setup>
 import { ref } from 'vue'
-import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
+import AppButton from '@/components/UI/AppButton.vue'
+import { useRouter } from 'vue-router'
 
-const rulesModal = ref(null)
-const settingsModal = ref(null)
+const isRulesModalOpen = ref(false)
+const isSettingsModalOpen = ref(false)
 const soundEnabled = ref(true)
 const musicEnabled = ref(true)
 
+const router = useRouter()
 const startGame = () => {
-  console.log('Игра началась!')
+  router.push('/game')
 }
 </script>
 
@@ -21,22 +23,21 @@ const startGame = () => {
 
       <div class="welcome-page__buttons">
         <AppButton @click="startGame">Начать игру</AppButton>
-        <AppButton @click="rulesModal.open()" :primary="false">Правила игры</AppButton>
-        <AppButton @click="settingsModal.open()" :primary="false">Настройки</AppButton>
+        <AppButton @click="isRulesModalOpen = true">Правила игры</AppButton>
+        <AppButton @click="isSettingsModalOpen = true">Настройки</AppButton>
       </div>
     </div>
 
-    <AppModal ref="rulesModal">
+    <AppModal v-model="isRulesModalOpen">
       <h2 class="modal-title">Правила игры</h2>
       <ul class="modal-list">
         <li>15 вопросов возрастающей сложности</li>
         <li>4 варианта ответа, только 1 верный</li>
         <li>3 подсказки: 50/50, звонок другу, помощь зала</li>
-        <li>Несгораемые суммы на 5, 10 и 15 вопросах</li>
       </ul>
     </AppModal>
 
-    <AppModal ref="settingsModal">
+    <AppModal v-model="isSettingsModalOpen">
       <h2 class="modal-title">Настройки</h2>
       <div class="modal-settings">
         <label class="setting-item">

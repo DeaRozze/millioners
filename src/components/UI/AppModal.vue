@@ -1,19 +1,23 @@
 <script setup>
-import { ref } from 'vue'
+defineProps({
+  modelValue: { 
+    type: Boolean,
+    required: true
+  }
+})
 
-const isOpen = ref(false)
+const emit = defineEmits(['update:modelValue'])
 
-const open = () => isOpen.value = true
-const close = () => isOpen.value = false
-
-defineExpose({ open, close })
+const handleClose = () => {
+  emit('update:modelValue', false)
+}
 </script>
 
 <template>
   <transition name="fade">
-    <div class="modal-overlay" v-if="isOpen" @click.self="close">
+    <div v-if="modelValue" class="modal-overlay" @click.self="handleClose">
       <div class="modal-content">
-        <button class="modal-close" @click="close">×</button>
+        <button class="modal-close" @click="handleClose">×</button>
         <slot></slot>
       </div>
     </div>

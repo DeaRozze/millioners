@@ -4,9 +4,10 @@ import WelcomePage from '@/pages/WelcomePage.vue'
 </script>
 
 <template>
- <WelcomePage />
+  <WelcomePage />
+  <router-view />
 </template>
 
 <style lang="scss">
-@use '@/assets/styles/main';  
+@use '@/assets/styles/main';
 </style>

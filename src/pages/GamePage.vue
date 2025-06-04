@@ -1,54 +1,47 @@
 <script setup>
-import AppButton from '@/components/UI/AppButton.vue'
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import AppButton from '@/components/UI/AppButton.vue';
+import { ref, computed, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { fetchQuestions } from '@/api/quizApi';
 
-const questions = [
-  {
-    id: 1,
-    text: 'Столица России?',
-    answers: [
-      { id: 1, text: 'Санкт-Петербург', isCorrect: false },
-      { id: 2, text: 'Москва', isCorrect: true },
-      { id: 3, text: 'Новосибирск', isCorrect: false },
-      { id: 4, text: 'Казань', isCorrect: false }
-    ]
-  },
-  {
-    id: 2,
-    text: 'Самая длинная река в мире?',
-    answers: [
-      { id: 1, text: 'Нил', isCorrect: false },
-      { id: 2, text: 'Амазонка', isCorrect: true },
-      { id: 3, text: 'Янцзы', isCorrect: false },
-      { id: 4, text: 'Миссисипи', isCorrect: false }
-    ]
+const router = useRouter();
+const questions = ref([]);
+const selectedAnswerId = ref(null);
+const showResult = ref(false);
+const isLoading = ref(true);
+const error = ref(null);
+
+onMounted(async () => {
+  try {
+    questions.value = await fetchQuestions();
+    if (questions.value.length === 0) {
+      error.value = "Вопросы не загружены. Попробуйте позже.";
+    }
+  } catch (err) {
+    error.value = "Ошибка загрузки вопросов: " + err.message;
+  } finally {
+    isLoading.value = false;
   }
-]
+});
 
-const router = useRouter()
-const currentQuestionIndex = ref(0)
-const selectedAnswerId = ref(null)
-const showResult = ref(false)
-const currentQuestion = ref(questions[currentQuestionIndex.value])
-
-const selectAnswer = (answerId) => {
-  if (showResult.value) return
-  selectedAnswerId.value = answerId
-  showResult.value = true
-}
-
+const currentQuestionIndex = ref(0);
+const currentQuestion = computed(() => {
+  return questions.value[currentQuestionIndex.value];
+});
 const nextQuestion = () => {
-  currentQuestionIndex.value++
-  if (currentQuestionIndex.value < questions.length) {
-    currentQuestion.value = questions[currentQuestionIndex.value]
-    selectedAnswerId.value = null
-    showResult.value = false
+  currentQuestionIndex.value++;
+  if (currentQuestionIndex.value >= questions.value.length) {
+    router.push('/');
   } else {
-    // Все вопросы закончились
-    router.push('/')
+    selectedAnswerId.value = null;
+    showResult.value = false;
   }
-}
+};
+const selectAnswer = (answerId) => {
+  if (showResult.value) return;
+  selectedAnswerId.value = answerId;
+  showResult.value = true;
+};
 
 const exitGame = () => {
   router.push('/')
@@ -56,20 +49,25 @@ const exitGame = () => {
 </script>
 <template>
   <div class="game-page">
+    <div v-if="isLoading">Загрузка вопросов...</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
+    <div v-else-if="!currentQuestion">Нет данных для отображения</div>
+    <div v-else>
+      <div class="game-page__content">
+        <h2 class="game-page__question">{{ currentQuestion.text }}</h2>
+        <div class="game-page__answers">
+          <div v-for='answer in currentQuestion.answers' :key='answer.id' class="answer" :class="{
+            'answer--selected': selectedAnswerId === answer.id,
+            'answer--correct': showResult && answer.isCorrect,
+            'answer--incorrect': showResult && selectedAnswerId === answer.id && !answer.isCorrect
+          }" @click="selectAnswer(answer.id)"> {{ answer.text }}</div>
+        </div>
+        <AppButton v-if="showResult" @click="nextQuestion" class="game-page__next-button">{{ currentQuestionIndex <
+          questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
+      </div>
+    </div>
     <div class="game-page__header">
       <AppButton @click="exitGame">На главную</AppButton>
-    </div>
-    <div class="game-page__content">
-      <h2 class="game-page__question">{{ currentQuestion.text }}</h2>
-      <div class="game-page__answers">
-        <div v-for='answer in currentQuestion.answers' :key='answer.id' class="answer" :class="{
-          'answer--selected': selectedAnswerId === answer.id,
-          'answer--correct': showResult && answer.isCorrect,
-          'answer--incorrect': showResult && selectedAnswerId === answer.id && !answer.isCorrect
-        }" @click="selectAnswer(answer.id)"> {{ answer.text }}</div>
-      </div>
-      <AppButton v-if="showResult" @click="nextQuestion" class="game-page__next-button">{{ currentQuestionIndex <
-        questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
     </div>
   </div>
 </template>

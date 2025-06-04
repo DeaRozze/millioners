@@ -10,6 +10,8 @@ const selectedAnswerId = ref(null);
 const showResult = ref(false);
 const isLoading = ref(true);
 const error = ref(null);
+const prize = ref(0)
+const prizeSteps = [100, 500, 1000, 2000, 5000, 25000, 50000, 100000, 500000, 1000000];
 
 onMounted(async () => {
   try {
@@ -40,10 +42,16 @@ const nextQuestion = () => {
 const selectAnswer = (answerId) => {
   if (showResult.value) return;
   selectedAnswerId.value = answerId;
-  showResult.value = true;
+  showResult.value = true
+
+  const selectedAnswer = currentQuestion.value.answers.find(a => a.id === answerId)
+  if (selectedAnswer.isCorrect) {
+    prize.value = prizeSteps[currentQuestionIndex.value];
+  }
 };
 
 const exitGame = () => {
+  prize.value = 0;
   router.push('/')
 }
 
@@ -58,6 +66,10 @@ const getAnswerClass = (answer) => {
 </script>
 <template>
   <div class="game-page">
+    <div class="game-page__header">
+      <AppButton @click="exitGame">На главную</AppButton>
+      <div class="game-page__prize">Текущий приз: {{ prize }}</div>
+    </div>
     <div v-if="isLoading">Загрузка вопросов...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else-if="!currentQuestion">Нет данных для отображения</div>
@@ -72,9 +84,7 @@ const getAnswerClass = (answer) => {
           questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
       </div>
     </div>
-    <div class="game-page__header">
-      <AppButton @click="exitGame">На главную</AppButton>
-    </div>
+
   </div>
 </template>
 
@@ -89,6 +99,12 @@ const getAnswerClass = (answer) => {
 
   &__header {
     margin-bottom: $spacing-xl;
+  }
+
+  &__prize {
+    font-size: $font-size-lg;
+    color: $color-accent;
+    font-weight: bold;
   }
 
   &__content {

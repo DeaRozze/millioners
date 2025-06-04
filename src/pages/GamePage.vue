@@ -42,11 +42,14 @@ const nextQuestion = () => {
 const selectAnswer = (answerId) => {
   if (showResult.value) return;
   selectedAnswerId.value = answerId;
-  showResult.value = true
+  showResult.value = true;
 
-  const selectedAnswer = currentQuestion.value.answers.find(a => a.id === answerId)
+  const selectedAnswer = currentQuestion.value.answers.find(a => a.id === answerId);
   if (selectedAnswer.isCorrect) {
-    prize.value = prizeSteps[currentQuestionIndex.value];
+    const currentLevel = prizeSteps.findIndex(step => step > prize.value);
+    prize.value = currentLevel >= 0 ? prizeSteps[currentLevel] : prizeSteps[prizeSteps.length - 1];
+  } else {
+    prize.value = 0; 
   }
 };
 
@@ -63,12 +66,21 @@ const getAnswerClass = (answer) => {
   if (selectedAnswerId.value === answer.id && !answer.isCorrect) return 'answer--incorrect';
   return '';
 };
+
+const getNextPrize = () => {
+  if (prize.value === 0) return prizeSteps[0];
+  const currentIndex = prizeSteps.indexOf(prize.value);
+  return currentIndex < prizeSteps.length - 1 ? prizeSteps[currentIndex + 1] : prizeSteps[prizeSteps.length - 1];
+};
 </script>
 <template>
   <div class="game-page">
     <div class="game-page__header">
       <AppButton @click="exitGame">На главную</AppButton>
-      <div class="game-page__prize">Текущий приз: {{ prize }}</div>
+      <div class="game-page__prize-info">
+        <div>Текущий приз: {{ prize }} ₽</div>
+        <div v-if="!showResult">Следующий приз: {{ getNextPrize() }} ₽</div>
+      </div>
     </div>
     <div v-if="isLoading">Загрузка вопросов...</div>
     <div v-else-if="error" class="error">{{ error }}</div>
@@ -101,10 +113,21 @@ const getAnswerClass = (answer) => {
     margin-bottom: $spacing-xl;
   }
 
-  &__prize {
-    font-size: $font-size-lg;
-    color: $color-accent;
-    font-weight: bold;
+  .game-page {
+    &__prize-info {
+      text-align: right;
+
+      div:first-child {
+        font-size: $font-size-lg;
+        color: $color-accent;
+        font-weight: bold;
+      }
+
+      div:last-child {
+        font-size: $font-size-md;
+        color: rgba($color-text, 0.8);
+      }
+    }
   }
 
   &__content {

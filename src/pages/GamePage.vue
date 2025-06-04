@@ -46,6 +46,15 @@ const selectAnswer = (answerId) => {
 const exitGame = () => {
   router.push('/')
 }
+
+const getAnswerClass = (answer) => {
+  if (!showResult.value) {
+    return selectedAnswerId.value === answer.id ? 'answer--selected' : '';
+  }
+  if (answer.isCorrect) return 'answer--correct';
+  if (selectedAnswerId.value === answer.id && !answer.isCorrect) return 'answer--incorrect';
+  return '';
+};
 </script>
 <template>
   <div class="game-page">
@@ -56,11 +65,8 @@ const exitGame = () => {
       <div class="game-page__content">
         <h2 class="game-page__question">{{ currentQuestion.text }}</h2>
         <div class="game-page__answers">
-          <div v-for='answer in currentQuestion.answers' :key='answer.id' class="answer" :class="{
-            'answer--selected': selectedAnswerId === answer.id,
-            'answer--correct': showResult && answer.isCorrect,
-            'answer--incorrect': showResult && selectedAnswerId === answer.id && !answer.isCorrect
-          }" @click="selectAnswer(answer.id)"> {{ answer.text }}</div>
+          <div v-for="answer in currentQuestion.answers" :key='answer' @click="selectAnswer(answer.id)"
+            :class="['answer', getAnswerClass(answer)]"> {{ answer.text }}</div>
         </div>
         <AppButton v-if="showResult" @click="nextQuestion" class="game-page__next-button">{{ currentQuestionIndex <
           questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>

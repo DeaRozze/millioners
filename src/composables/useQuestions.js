@@ -8,6 +8,7 @@ export function useQuestions() {
 
   const loadQuestions = async () => {
     try {
+      questions.value = await fetchQuestions();
       if (questions.value.length === 0) {
         error.value = 'Вопросы не загружены. Попробуйте позже.'
       }

@@ -1,53 +1,44 @@
 <script setup>
 import AppButton from '@/components/UI/AppButton.vue';
-import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useAnswerLogic } from '@/composables/useAnswerLogic';
+import { useQuestions } from '@/composables/useQuestions';
+import { useNavigation } from '@/composables/useNavigation';
+import { useGameState } from '@/composables/useGameState';
 
-import { PRIZE_STEPS } from '@/constants/game';
+const gameState = useGameState();
+const questionsState = useQuestions()
+const navigation = useNavigation()
 
-const router = useRouter();
+// деструкт
+const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } = gameState;
+const { questions, isLoading, error } = questionsState
+const { navigateToHome } = navigation
 
-const currentQuestion = computed(() => {
-  return questions.value[currentQuestionIndex.value];
-});
+// текущий вопрос
+const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 
-const nextQuestion = async () => {
-  currentQuestionIndex.value++;
-  if (currentQuestionIndex.value >= questions.value.length) {
-    await router.push('/');
-    console.log('Переход завершён');
+// вся логика ответов
+const answerLogic = useAnswerLogic(questions, currentQuestionIndex, selectedAnswerId, showResult, prize)
+const { getAnswerClass, selectAnswer, nextQuestion } = answerLogic;
+
+const handleNextQuestion = async () => {
+  const gameFinished = nextQuestion();
+  if (gameFinished) {
+    await navigateToHome();
+    console.log('игра зверешена!');
   } else {
     selectedAnswerId.value = null;
-    showResult.value = false;
+    showResult.value = false
   }
-};
-const selectAnswer = (answerId) => {
-  if (showResult.value) return;
-  selectedAnswerId.value = answerId;
-  showResult.value = true;
-
-  const selectedAnswer = currentQuestion.value.answers.find(a => a.id === answerId);
-  if (selectedAnswer.isCorrect) {
-    const currentLevel = PRIZE_STEPS.findIndex(step => step > prize.value);
-    prize.value = currentLevel >= 0 ? PRIZE_STEPS[currentLevel] : PRIZE_STEPS[PRIZE_STEPS.length - 1];
-  } else {
-    prize.value = 0;
-  }
-};
-
-const exitGame = () => {
-  prize.value = 0;
-  router.push('/')
 }
 
-const getAnswerClass = (answer) => {
-  if (!showResult.value) {
-    return selectedAnswerId.value === answer.id ? 'answer--selected' : '';
-  }
-  if (answer.isCorrect) return 'answer--correct';
-  if (selectedAnswerId.value === answer.id && !answer.isCorrect) return 'answer--incorrect';
-  return '';
-};
+const exitGame = () => {
+  resetGameState();
+  navigateToHome();
+}
+
+
 </script>
 <template>
   <div class="game-page">
@@ -68,8 +59,8 @@ const getAnswerClass = (answer) => {
           <div v-for="answer in currentQuestion.answers" :key='answer' @click="selectAnswer(answer.id)"
             :class="['answer', getAnswerClass(answer)]"> {{ answer.text }}</div>
         </div>
-        <AppButton v-if="showResult" @click="nextQuestion" class="game-page__next-button">{{ currentQuestionIndex <
-          questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
+        <AppButton v-if="showResult" @click="handleNextQuestion" class="game-page__next-button">{{ currentQuestionIndex
+          < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
       </div>
     </div>
 

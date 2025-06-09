@@ -61,31 +61,31 @@ const startGame = () => {
   justify-content: center;
   align-items: center;
   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
-  padding: $spacing-xl;
+  padding: var(--spacing-xl);
 
   &__content {
     text-align: center;
     max-width: 800px;
     width: 100%;
-    padding: $spacing-xl;
+    padding: var(--spacing-xl);
   }
 
   &__title {
-    font-size: $font-size-xxl;
-    color: $color-accent;
-    margin-bottom: $spacing-lg;
-    text-shadow: $box-shadow;
+    font-size: var(--font-size-xxl);
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-lg);
+    text-shadow: var(--box-shadow);
   }
 
   &__subtitle {
-    font-size: $font-size-lg;
-    margin-bottom: $spacing-xl;
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-xl);
   }
 
   &__buttons {
     display: flex;
     flex-direction: column;
-    gap: $spacing-md;
+    gap: var(--spacing-md);
     width: 100%;
     max-width: 300px;
     margin: 0 auto;

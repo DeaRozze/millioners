@@ -34,8 +34,6 @@ const handleClose = (event) => {
 </template>
 
 <style lang='scss' scoped>
-@use '@/assets/styles/variables' as *;
-
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -50,26 +48,26 @@ const handleClose = (event) => {
 }
 
 .modal-content {
-  background: $color-bg;
-  padding: $spacing-xl;
-  border-radius: $border-radius;
+  background: var(--color-bg);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius);
   position: relative;
   max-width: 600px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
-  box-shadow: $box-shadow;
+  box-shadow: var(--box-shadow);
 }
 
 .modal-close {
   position: absolute;
-  top: $spacing-sm;
-  right: $spacing-sm;
-  font-size: $font-size-xl;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  font-size: var(--font-size-xl);
   background: none;
   border: none;
   cursor: pointer;
-  color: $color-text;
+  color: var(--color-text);
   transition: transform 0.2s;
 
   &:hover {

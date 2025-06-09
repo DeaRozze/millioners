@@ -16,34 +16,31 @@ defineEmits(['click'])
 </template>
 
 <style lang='scss' scoped>
-@use '@/assets/styles/variables' as *;
-@use 'sass:color';
-
 .app-button {
-  padding: $spacing-md $spacing-lg;
+  padding: var(--spacing-md) var(--spacing-lg);
   border: none;
-  border-radius: $border-radius;
-  font-size: $font-size-md;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-md);
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: $box-shadow;
+  box-shadow: var(--box-shadow);
 
   &--primary {
-    background: $color-primary;
-    color: $color-text;
+    background: var(--color-primary);
+    color: var(--color-text);
 
     &:hover {
-      background: color.adjust($color-primary, $lightness: 10%);
+      background: oklch(from var(--color-primary) calc(l + 0.1) c h);
       transform: translateY(-2px);
     }
   }
 
   &:not(&--primary) {
-    background: rgba($color-text, 0.1);
-    color: $color-text;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-text);
 
     &:hover {
-      background: rgba($color-text, 0.2);
+      background: rgba(255, 255, 255, 0.2);
     }
   }
 }

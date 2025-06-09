@@ -1,8 +1,8 @@
 @use 'reset';
-@use 'variables' as *;
+@import 'variables';
 
 body {
   font-family: 'Arial', sans-serif;
-  background-color: $color-bg;
-  color: $color-text;
+  background-color: var(--color-bg);
+  color: var(--color-text);
 }

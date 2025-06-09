@@ -103,13 +103,13 @@ onMounted(async () => {
 
 <style lang='scss' scoped>
 .game-page {
-  padding: $spacing-xl;
+  padding: var(--spacing-xl);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 
   &__header {
-    margin-bottom: $spacing-xl;
+    margin-bottom: var(--spacing-xl);
   }
 
   .game-page {
@@ -117,14 +117,14 @@ onMounted(async () => {
       text-align: right;
 
       div:first-child {
-        font-size: $font-size-lg;
-        color: $color-accent;
+        font-size: var(--font-size-lg);
+        color: var(--color-accent);
         font-weight: bold;
       }
 
       div:last-child {
-        font-size: $font-size-md;
-        color: rgba($color-text, 0.8);
+        font-size: var(--font-size-md);
+        color: rgba(var(--color-text), 0.8);
       }
     }
   }
@@ -140,53 +140,53 @@ onMounted(async () => {
   }
 
   &__question {
-    font-size: $font-size-xl;
-    margin-bottom: $spacing-xl;
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-xl);
     text-align: center;
-    color: $color-accent;
+    color: var(--color-accent);
   }
 
   &__answers {
     width: 100%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: $spacing-md;
-    margin-bottom: $spacing-xl;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
   }
 
   &__next-button {
-    margin-top: $spacing-lg;
+    margin-top: var(--spacing-lg);
   }
 }
 
 .answer {
-  padding: $spacing-md;
-  border: 2px solid $color-primary;
-  border-radius: $border-radius;
+  padding: var(--spacing-md);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
   cursor: pointer;
   text-align: center;
   transition: all 0.3s ease;
-  background: rgba($color-primary, 0.1);
+  background: rgba(var(--color-primary), 0.1);
 
   &:hover {
-    background: rgba($color-primary, 0.3);
+    background: rgba(var(--color-primary), 0.3);
   }
 
   &--selected {
-    background: $color-primary;
-    color: $color-text;
+    background: var(--color-primary);
+    color: var(--color-text);
   }
 
   &--correct {
     background: #4CAF50;
     border-color: #4CAF50;
-    color: $color-text;
+    color: var(--color-text);
   }
 
   &--incorrect {
     background: #F44336;
     border-color: #F44336;
-    color: $color-text;
+    color: var(--color-text);
   }
 }
 </style>

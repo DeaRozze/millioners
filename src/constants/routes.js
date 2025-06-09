@@ -1,6 +1,6 @@
 export const ROUTE_NAMES = {
   HOME: 'home',
-  Game: 'game',
+  GAME: 'game',
 }
 
 export const ROUTE_PATHS = {

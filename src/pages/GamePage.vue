@@ -11,16 +11,17 @@ const showResult = ref(false);
 const isLoading = ref(true);
 const error = ref(null);
 const prize = ref(0)
-const prizeSteps = [100, 500, 1000, 2000, 5000, 25000, 50000, 100000, 500000, 1000000];
+const prizeSteps = [1_00, 5_00, 1_000, 2_000, 5_000, 25_000, 5_0000, 1_00000, 5_00000, 1_000000];
 
 const currentQuestionIndex = ref(0);
 const currentQuestion = computed(() => {
   return questions.value[currentQuestionIndex.value];
 });
-const nextQuestion = () => {
+const nextQuestion = async () => {
   currentQuestionIndex.value++;
   if (currentQuestionIndex.value >= questions.value.length) {
-    router.push('/');
+    await router.push('/');
+    console.log('Переход завершён');
   } else {
     selectedAnswerId.value = null;
     showResult.value = false;

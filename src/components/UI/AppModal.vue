@@ -1,6 +1,8 @@
 <script setup>
+import { ref } from 'vue'
+
 defineProps({
-  modelValue: { 
+  modelValue: {
     type: Boolean,
     required: true
   }
@@ -8,14 +10,21 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const handleClose = () => {
-  emit('update:modelValue', false)
+const mouseDownTarget = ref(null)
+const handleMouseDown = (event) => {
+  mouseDownTarget.value = event.target
+}
+
+const handleClose = (event) => {
+  if (mouseDownTarget.value === event.currentTarget) {
+    emit('update:modelValue', false)
+  }
 }
 </script>
 
 <template>
   <transition name="fade">
-    <div v-if="modelValue" class="modal-overlay" @click.self="handleClose">
+    <div v-if="modelValue" class="modal-overlay" @click.self="handleClose" @mousedown="handleMouseDown">
       <div class="modal-content">
         <button class="modal-close" @click="handleClose">×</button>
         <slot></slot>

@@ -101,8 +101,6 @@ onMounted(async () => {
 </template>
 
 <style lang='scss' scoped>
-@use '@/assets/styles/variables' as *;
-
 .game-page {
   padding: $spacing-xl;
   min-height: 100vh;

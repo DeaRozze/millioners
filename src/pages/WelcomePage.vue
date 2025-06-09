@@ -54,22 +54,20 @@ const startGame = () => {
 </template>
 
 <style lang="scss" scoped>
-@use '@/assets/styles/variables' as *;
-
 .welcome-page {
   width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), $color-bg;
-  padding: $spacing-xl; // Исправлено с large на xl
+  background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
+  padding: $spacing-xl;
 
   &__content {
     text-align: center;
     max-width: 800px;
     width: 100%;
-    padding: $spacing-xl; // Исправлено с large на xl
+    padding: $spacing-xl;
   }
 
   &__title {

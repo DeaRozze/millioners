@@ -12,6 +12,11 @@ const routes = [
     name: ROUTE_NAMES.GAME,
     component: () => import('@/pages/GamePage.vue'),
   },
+  {
+    path: ROUTE_PATHS.RESULT,
+    name: ROUTE_NAMES.RESULT,
+    component: () => import('@/pages/ResultPage.vue'),
+  },
 ]
 
 const router = createRouter({

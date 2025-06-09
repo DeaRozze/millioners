@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import { useRouter } from 'vue-router'
+import { ROUTE_PATHS } from '@/constants/routes'
 
 const isRulesModalOpen = ref(false)
 const isSettingsModalOpen = ref(false)
@@ -11,7 +12,7 @@ const musicEnabled = ref(true)
 
 const router = useRouter()
 const startGame = () => {
-  router.push('/game')
+  router.push(ROUTE_PATHS.GAME)
 }
 </script>
 

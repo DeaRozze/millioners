@@ -22,10 +22,10 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 const answerLogic = useAnswerLogic(questions, currentQuestionIndex, selectedAnswerId, showResult, prize)
 const { getAnswerClass, selectAnswer, nextQuestion } = answerLogic;
 
-const handleNextQuestion = async () => {
+const handleNextQuestion = () => {
   const gameFinished = nextQuestion();
   if (gameFinished) {
-    await navigateToHome();
+    navigateToHome();
     console.log('игра зверешена!');
   } else {
     selectedAnswerId.value = null;
@@ -37,8 +37,6 @@ const exitGame = () => {
   resetGameState();
   navigateToHome();
 }
-
-
 </script>
 <template>
   <div class="game-page">

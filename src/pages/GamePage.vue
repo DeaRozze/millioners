@@ -2,21 +2,15 @@
 import AppButton from '@/components/UI/AppButton.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { fetchQuestions } from '@/api/quizApi';
+
+import { PRIZE_STEPS } from '@/constants/game';
 
 const router = useRouter();
-const questions = ref([]);
-const selectedAnswerId = ref(null);
-const showResult = ref(false);
-const isLoading = ref(true);
-const error = ref(null);
-const prize = ref(0)
-const prizeSteps = [1_00, 5_00, 1_000, 2_000, 5_000, 25_000, 5_0000, 1_00000, 5_00000, 1_000000];
 
-const currentQuestionIndex = ref(0);
 const currentQuestion = computed(() => {
   return questions.value[currentQuestionIndex.value];
 });
+
 const nextQuestion = async () => {
   currentQuestionIndex.value++;
   if (currentQuestionIndex.value >= questions.value.length) {
@@ -34,8 +28,8 @@ const selectAnswer = (answerId) => {
 
   const selectedAnswer = currentQuestion.value.answers.find(a => a.id === answerId);
   if (selectedAnswer.isCorrect) {
-    const currentLevel = prizeSteps.findIndex(step => step > prize.value);
-    prize.value = currentLevel >= 0 ? prizeSteps[currentLevel] : prizeSteps[prizeSteps.length - 1];
+    const currentLevel = PRIZE_STEPS.findIndex(step => step > prize.value);
+    prize.value = currentLevel >= 0 ? PRIZE_STEPS[currentLevel] : PRIZE_STEPS[PRIZE_STEPS.length - 1];
   } else {
     prize.value = 0;
   }
@@ -54,25 +48,6 @@ const getAnswerClass = (answer) => {
   if (selectedAnswerId.value === answer.id && !answer.isCorrect) return 'answer--incorrect';
   return '';
 };
-
-const getNextPrize = () => {
-  if (prize.value === 0) return prizeSteps[0];
-  const currentIndex = prizeSteps.indexOf(prize.value);
-  return currentIndex < prizeSteps.length - 1 ? prizeSteps[currentIndex + 1] : prizeSteps[prizeSteps.length - 1];
-};
-
-onMounted(async () => {
-  try {
-    questions.value = await fetchQuestions();
-    if (questions.value.length === 0) {
-      error.value = "Вопросы не загружены. Попробуйте позже.";
-    }
-  } catch (err) {
-    error.value = "Ошибка загрузки вопросов: " + err.message;
-  } finally {
-    isLoading.value = false;
-  }
-});
 </script>
 <template>
   <div class="game-page">

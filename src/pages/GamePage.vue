@@ -75,23 +75,24 @@ const exitGame = () => {
   flex-direction: column;
 
   &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: var(--spacing-xl);
   }
 
-  .game-page {
-    &__prize-info {
-      text-align: right;
+  &__prize-info {
+    text-align: right;
 
-      div:first-child {
-        font-size: var(--font-size-lg);
-        color: var(--color-accent);
-        font-weight: bold;
-      }
+    div:first-child {
+      font-size: var(--font-size-lg);
+      color: var(--color-accent);
+      font-weight: bold;
+    }
 
-      div:last-child {
-        font-size: var(--font-size-md);
-        color: rgba(var(--color-text), 0.8);
-      }
+    div:last-child {
+      font-size: var(--font-size-md);
+      color: rgba(var(--color-text), 0.8);
     }
   }
 
@@ -154,5 +155,11 @@ const exitGame = () => {
     border-color: #F44336;
     color: var(--color-text);
   }
+}
+
+.error {
+  color: #F44336;
+  text-align: center;
+  font-size: var(--font-size-lg);
 }
 </style>

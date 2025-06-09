@@ -1,14 +1,15 @@
 import { useRouter } from 'vue-router'
+import { ROUTE_PATHS } from '@/constants/routes'
 
 export function useNavigation() {
   const router = useRouter()
 
   const navigateToHome = () => {
-    router.push('/')
+    router.push(ROUTE_PATHS.HOME)
   }
 
   const navigateToGame = () => {
-    router.push('/game')
+    router.push(ROUTE_PATHS.GAME)
   }
 
   return {

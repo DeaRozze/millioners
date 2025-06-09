@@ -13,19 +13,6 @@ const error = ref(null);
 const prize = ref(0)
 const prizeSteps = [100, 500, 1000, 2000, 5000, 25000, 50000, 100000, 500000, 1000000];
 
-onMounted(async () => {
-  try {
-    questions.value = await fetchQuestions();
-    if (questions.value.length === 0) {
-      error.value = "Вопросы не загружены. Попробуйте позже.";
-    }
-  } catch (err) {
-    error.value = "Ошибка загрузки вопросов: " + err.message;
-  } finally {
-    isLoading.value = false;
-  }
-});
-
 const currentQuestionIndex = ref(0);
 const currentQuestion = computed(() => {
   return questions.value[currentQuestionIndex.value];
@@ -49,7 +36,7 @@ const selectAnswer = (answerId) => {
     const currentLevel = prizeSteps.findIndex(step => step > prize.value);
     prize.value = currentLevel >= 0 ? prizeSteps[currentLevel] : prizeSteps[prizeSteps.length - 1];
   } else {
-    prize.value = 0; 
+    prize.value = 0;
   }
 };
 
@@ -72,6 +59,19 @@ const getNextPrize = () => {
   const currentIndex = prizeSteps.indexOf(prize.value);
   return currentIndex < prizeSteps.length - 1 ? prizeSteps[currentIndex + 1] : prizeSteps[prizeSteps.length - 1];
 };
+
+onMounted(async () => {
+  try {
+    questions.value = await fetchQuestions();
+    if (questions.value.length === 0) {
+      error.value = "Вопросы не загружены. Попробуйте позже.";
+    }
+  } catch (err) {
+    error.value = "Ошибка загрузки вопросов: " + err.message;
+  } finally {
+    isLoading.value = false;
+  }
+});
 </script>
 <template>
   <div class="game-page">

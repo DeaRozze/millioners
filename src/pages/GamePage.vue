@@ -120,8 +120,9 @@ const exitGame = () => {
     margin-bottom: var(--spacing-xl);
   }
 
-  &__next-button {
+  .game-page__next-button {
     margin-top: var(--spacing-lg);
+    animation: fadeInUp 0.5s ease-out;
   }
 }
 
@@ -131,12 +132,26 @@ const exitGame = () => {
   border-radius: var(--border-radius);
   cursor: pointer;
   text-align: center;
-  transition: all 0.3s ease;
+  transition: all 0.5s ease;
   background: rgba(var(--color-primary), 0.1);
+  position: relative;
+  overflow: hidden;
 
   &--processing {
-    animation: pulse 1s infinite;
-    background: rgba(255, 255, 255, 0.5);
+    &::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(to bottom right,
+          rgba(255, 255, 255, 0) 45%,
+          rgba(255, 255, 255, 0.8) 50%,
+          rgba(255, 255, 255, 0) 55%);
+      animation: shimmer 2s infinite linear;
+      transform: rotate(30deg);
+    }
   }
 
   &:hover {
@@ -146,32 +161,38 @@ const exitGame = () => {
   &--selected {
     background: var(--color-primary);
     color: var(--color-text);
+    transform: scale(1.02);
+    box-shadow: 0 0 15px rgba(var(--color-accent), 0.5);
   }
 
   &--correct {
     background: #4CAF50;
     border-color: #4CAF50;
     color: var(--color-text);
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.7);
   }
 
   &--incorrect {
     background: #F44336;
     border-color: #F44336;
     color: var(--color-text);
+    transform: scale(1.02);
+    box-shadow: 0 0 20px rgba(244, 67, 54, 0.7);
+  }
+
+  &:hover:not(&--selected, &--correct, &--incorrect) {
+    background: rgba(var(--color-primary), 0.3);
   }
 }
 
-@keyframes pulse {
+@keyframes shimmer {
   0% {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  50% {
-    background: rgba(255, 255, 255, 0.7);
+    transform: translateX(-100%) rotate(30deg);
   }
 
   100% {
-    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(100%) rotate(30deg);
   }
 }
 

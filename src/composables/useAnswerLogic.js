@@ -13,6 +13,9 @@ export function useAnswerLogic(
   const isProcessing = ref(false)
 
   const getAnswerClass = (answer) => {
+    if (isProcessing.value && selectedAnswerId.value === answer.id) {
+      return 'answer--selected answer--processing'
+    }
     if (!showResult.value) {
       return selectedAnswerId.value === answer.id ? 'answer--selected' : ''
     }

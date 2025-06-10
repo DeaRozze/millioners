@@ -42,6 +42,7 @@ export function useAnswerLogic(
         currentLevel >= 0 ? PRIZE_STEPS[currentLevel] : PRIZE_STEPS[PRIZE_STEPS.length - 1]
     } else {
       prize.value = 0
+      await new Promise((resolve) => setTimeout(resolve, 3000))
       router.push('/result')
     }
   }

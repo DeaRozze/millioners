@@ -55,7 +55,8 @@ const exitGame = () => {
         <h2 class="game-page__question">{{ currentQuestion.text }}</h2>
         <div class="game-page__answers">
           <div v-for="answer in currentQuestion.answers" :key='answer' @click="selectAnswer(answer.id)"
-            :class="['answer', getAnswerClass(answer)]"> {{ answer.text }}</div>
+            :class="['answer', getAnswerClass(answer)]"> {{ answer.text }}
+          </div>
         </div>
         <AppButton v-if="showResult" @click="handleNextQuestion" class="game-page__next-button">{{ currentQuestionIndex
           < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
@@ -133,6 +134,11 @@ const exitGame = () => {
   transition: all 0.3s ease;
   background: rgba(var(--color-primary), 0.1);
 
+  &--processing {
+    animation: pulse 1s infinite;
+    background: rgba(255, 255, 255, 0.5);
+  }
+
   &:hover {
     background: rgba(var(--color-primary), 0.3);
   }
@@ -152,6 +158,20 @@ const exitGame = () => {
     background: #F44336;
     border-color: #F44336;
     color: var(--color-text);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  50% {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  100% {
+    background: rgba(255, 255, 255, 0.3);
   }
 }
 

@@ -1,4 +1,5 @@
 import { PRIZE_STEPS } from '@/constants/game'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 export function useAnswerLogic(
@@ -9,6 +10,7 @@ export function useAnswerLogic(
   prize,
 ) {
   const router = useRouter()
+  const isProcessing = ref(false)
 
   const getAnswerClass = (answer) => {
     if (!showResult.value) {
@@ -19,11 +21,15 @@ export function useAnswerLogic(
     return ''
   }
 
-  const selectAnswer = (answerId) => {
-    if (showResult.value) return
+  const selectAnswer = async (answerId) => {
+    if (showResult.value || isProcessing.value) return
     selectedAnswerId.value = answerId
-    showResult.value = true
+    isProcessing.value = true
 
+    await new Promise((resolve) => setTimeout(resolve, 3000))
+
+    isProcessing.value = false
+    showResult.value = true
     const currentQuestion = questions.value[currentQuestionIndex.value]
     const selectedAnswer = currentQuestion.answers.find((a) => a.id === answerId)
 
@@ -36,13 +42,16 @@ export function useAnswerLogic(
       router.push('/result')
     }
   }
+
   const nextQuestion = () => {
     currentQuestionIndex.value++
     return currentQuestionIndex.value >= questions.value.length
   }
+
   return {
     getAnswerClass,
     selectAnswer,
     nextQuestion,
+    isProcessing,
   }
 }

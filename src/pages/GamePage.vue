@@ -1,5 +1,6 @@
 <script setup>
 import AppButton from '@/components/UI/AppButton.vue';
+import AppModal from '@/components/UI/AppModal.vue';
 import { computed } from 'vue';
 import { useAnswerLogic } from '@/composables/useAnswerLogic';
 import { useQuestions } from '@/composables/useQuestions';
@@ -20,7 +21,7 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 
 // вся логика ответов
 const answerLogic = useAnswerLogic(questions, currentQuestionIndex, selectedAnswerId, showResult, prize)
-const { getAnswerClass, selectAnswer, nextQuestion } = answerLogic;
+const { getAnswerClass, selectAnswer, nextQuestion, showResultModal } = answerLogic;
 
 const handleNextQuestion = () => {
   const gameFinished = nextQuestion();
@@ -34,6 +35,15 @@ const handleNextQuestion = () => {
 }
 
 const exitGame = () => {
+  resetGameState();
+  navigateToHome();
+}
+
+const playAgain = () => {
+  resetGameState();
+  showResultModal.value = false;
+}
+const goToHome = () => {
   resetGameState();
   navigateToHome();
 }
@@ -62,7 +72,15 @@ const exitGame = () => {
           < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
       </div>
     </div>
-
+    <AppModal v-model="showResultModal">
+      <div class="result-modal">
+        <h2 class="result-modal__title">Как жаль - вы проиграли!</h2>
+        <div class="result-modal__buttons">
+          <AppButton @click='playAgain'>Играть снова</AppButton>
+          <AppButton @click='goToHome'>На главную</AppButton>
+        </div>
+      </div>
+    </AppModal>
   </div>
 </template>
 
@@ -183,6 +201,26 @@ const exitGame = () => {
 
   &:hover:not(&--selected, &--correct, &--incorrect) {
     background: rgba(var(--color-primary), 0.3);
+  }
+}
+
+.result-modal {
+  text-align: center;
+  padding: var(--spacing-xl);
+
+  &__title {
+    font-size: var(--font-size-xxl);
+    color: #F44336;
+    margin-bottom: var(--spacing-xl);
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
   }
 }
 

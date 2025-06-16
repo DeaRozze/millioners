@@ -1,6 +1,5 @@
 import { PRIZE_STEPS } from '@/constants/game'
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 export function useAnswerLogic(
   questions,
@@ -9,8 +8,8 @@ export function useAnswerLogic(
   showResult,
   prize,
 ) {
-  const router = useRouter()
   const isProcessing = ref(false)
+  const showResultModal = ref(false)
 
   const getAnswerClass = (answer) => {
     if (isProcessing.value && selectedAnswerId.value === answer.id) {
@@ -42,8 +41,7 @@ export function useAnswerLogic(
         currentLevel >= 0 ? PRIZE_STEPS[currentLevel] : PRIZE_STEPS[PRIZE_STEPS.length - 1]
     } else {
       prize.value = 0
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-      router.push('/result')
+      showResultModal.value = true
     }
   }
 
@@ -57,5 +55,6 @@ export function useAnswerLogic(
     selectAnswer,
     nextQuestion,
     isProcessing,
+    showResultModal,
   }
 }

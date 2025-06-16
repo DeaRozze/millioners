@@ -22,5 +22,23 @@ export default defineConfig([
 
   js.configs.recommended,
   ...pluginVue.configs['flat/essential'],
+  {
+    plugins: {
+      vue: pluginVue,
+    },
+    rules: {
+      'vue/max-attributes-per-line': [
+        'error',
+        {
+          singleline: {
+            max: 3, 
+          },
+          multiline: {
+            max: 1, 
+          },
+        },
+      ],
+    },
+  },
   skipFormatting,
 ])

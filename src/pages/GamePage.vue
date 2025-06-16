@@ -15,15 +15,15 @@ const currentQuestion = computed(() => questions.value[currentQuestionIndex.valu
 
 const { getAnswerClass, selectAnswer, nextQuestion, showResultModal } = useAnswerLogic(questions, currentQuestionIndex, selectedAnswerId, showResult, prize)
 
-const handleNextQuestion = () => {
+const checkCurrentQuestion = () => {
   const gameFinished = nextQuestion();
   if (gameFinished) {
     navigateToHome();
     console.log('игра зверешена!');
-  } else {
-    selectedAnswerId.value = null;
-    showResult.value = false
+    return
   }
+  selectedAnswerId.value = null;
+  showResult.value = false
 }
 
 const exitGame = () => {
@@ -60,8 +60,9 @@ const goToHome = () => {
             :class="['answer', getAnswerClass(answer)]"> {{ answer.text }}
           </div>
         </div>
-        <AppButton v-if="showResult" @click="handleNextQuestion" class="game-page__next-button">{{ currentQuestionIndex
-          < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
+        <AppButton v-if="showResult" @click="checkCurrentQuestion" class="game-page__next-button">{{
+          currentQuestionIndex
+            < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }} </AppButton>
       </div>
     </div>
     <AppModal v-model="showResultModal">

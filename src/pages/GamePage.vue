@@ -7,21 +7,13 @@ import { useQuestions } from '@/composables/useQuestions';
 import { useNavigation } from '@/composables/useNavigation';
 import { useGameState } from '@/composables/useGameState';
 
-const gameState = useGameState();
-const questionsState = useQuestions()
-const navigation = useNavigation()
+const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } = useGameState();
+const { questions, isLoading, error } = useQuestions();
+const { navigateToHome } = useNavigation();
 
-// деструкт
-const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } = gameState;
-const { questions, isLoading, error } = questionsState
-const { navigateToHome } = navigation
-
-// текущий вопрос
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 
-// вся логика ответов
-const answerLogic = useAnswerLogic(questions, currentQuestionIndex, selectedAnswerId, showResult, prize)
-const { getAnswerClass, selectAnswer, nextQuestion, showResultModal } = answerLogic;
+const { getAnswerClass, selectAnswer, nextQuestion, showResultModal } = useAnswerLogic(questions, currentQuestionIndex, selectedAnswerId, showResult, prize)
 
 const handleNextQuestion = () => {
   const gameFinished = nextQuestion();

@@ -1,4 +1,4 @@
-import { ref} from 'vue'
+import { ref, onMounted } from 'vue'
 import { PRIZE_STEPS } from '@/constants/game'
 
 export function useGameState() {
@@ -20,7 +20,27 @@ export function useGameState() {
     showResult.value = false
     prize.value = 0
     currentQuestionIndex.value = 0
+    localStorage.removeItem('gameState')
   }
+
+  const saveGameState = () => {
+    localStorage.setItem(
+      'gameState',
+      JSON.stringify({
+        prize: prize.value,
+        currentQuestionIndex: currentQuestionIndex.value,
+      }),
+    )
+  }
+
+  onMounted(() => {
+    const savedGame = localStorage.getItem('gameState')
+    if (savedGame) {
+      const { prize: savedPrize, currentQuestionIndex: savedIndex } = JSON.parse(savedGame)
+      prize.value = savedPrize
+      currentQuestionIndex.value = savedIndex
+    }
+  })
 
   return {
     selectedAnswerId,
@@ -29,5 +49,6 @@ export function useGameState() {
     currentQuestionIndex,
     getNextPrize,
     resetGameState,
+    saveGameState,
   }
 }

@@ -39,13 +39,13 @@ export function useAnswerLogic(
       const currentLevel = PRIZE_STEPS.findIndex((step) => step > prize.value)
       prize.value =
         currentLevel >= 0 ? PRIZE_STEPS[currentLevel] : PRIZE_STEPS[PRIZE_STEPS.length - 1]
-    } else {
-      prize.value = 0
-      showResultModal.value = true
+      return;
     }
+    prize.value = 0
+    showResultModal.value = true
   }
 
-  const nextQuestion = () => {
+  const canGonextQuestion = () => {
     currentQuestionIndex.value++
     return currentQuestionIndex.value >= questions.value.length
   }
@@ -53,7 +53,7 @@ export function useAnswerLogic(
   return {
     getAnswerClass,
     selectAnswer,
-    nextQuestion,
+    canGonextQuestion,
     isProcessing,
     showResultModal,
   }

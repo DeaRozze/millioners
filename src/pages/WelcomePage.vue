@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import { useRouter } from 'vue-router'
@@ -14,6 +14,22 @@ const router = useRouter()
 const startGame = () => {
   router.push(ROUTE_PATHS.GAME)
 }
+
+watch([soundEnabled, musicEnabled], () => {
+  localStorage.setItem('gameSettings', JSON.stringify({
+    soundEnabled: soundEnabled.value,
+    musicEnabled: musicEnabled.value
+  }))
+})
+
+onMounted(() => {
+  const savedSettings = localStorage.getItem('gameSettings')
+  if (savedSettings) {
+    const settings = JSON.parse(savedSettings)
+    soundEnabled.value = settings.soundEnabled
+    musicEnabled.value = settings.musicEnabled
+  }
+})
 </script>
 
 <template>

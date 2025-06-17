@@ -13,10 +13,10 @@ const { navigateToHome } = useNavigation();
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 
-const { getAnswerClass, selectAnswer, nextQuestion, showResultModal } = useAnswerLogic(questions, currentQuestionIndex, selectedAnswerId, showResult, prize)
+const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = useAnswerLogic(questions, currentQuestionIndex, selectedAnswerId, showResult, prize)
 
 const checkCurrentQuestion = () => {
-  const gameFinished = nextQuestion();
+  const gameFinished = canGonextQuestion();
   if (gameFinished) {
     navigateToHome();
     console.log('игра зверешена!');

@@ -1,11 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { ROUTE_NAMES, ROUTE_PATHS } from '@/constants/routes'
+import WelcomePage from '@/pages/WelcomePage.vue'
 
 const routes = [
   {
     path: ROUTE_PATHS.HOME,
     name: ROUTE_NAMES.HOME,
-    component: import('@/pages/WelcomePage.vue'),
+    component: WelcomePage,
   },
   {
     path: ROUTE_PATHS.GAME,

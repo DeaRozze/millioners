@@ -7,5 +7,5 @@
 </template>
 
 <style lang="scss">
-@import '@/assets/styles/global';
+@use '@/assets/styles/global';
 </style>

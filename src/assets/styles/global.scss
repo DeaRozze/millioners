@@ -1,5 +1,5 @@
 @use 'reset';
-@import 'variables';
+@use 'variables' as *;
 
 body {
   font-family: 'Arial', sans-serif;

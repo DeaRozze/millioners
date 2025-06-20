@@ -1,7 +1,7 @@
 <script setup>
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
-import { computed, watch } from 'vue'
+import { computed} from 'vue'
 import { useAnswerLogic } from '@/composables/useAnswerLogic'
 import { useQuestions } from '@/composables/useQuestions'
 import { useNavigation } from '@/composables/useNavigation'
@@ -14,16 +14,11 @@ const {
   currentQuestionIndex,
   getNextPrize,
   resetGameState,
-  saveGameState,
 } = useGameState()
 const { questions, isLoading, error } = useQuestions()
 const { navigateToHome } = useNavigation()
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
-
-watch([prize, currentQuestionIndex], () => {
-  saveGameState()
-})
 
 const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = useAnswerLogic(
   questions,
@@ -36,7 +31,7 @@ const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = use
 const checkCurrentQuestion = () => {
   const gameFinished = canGonextQuestion()
   if (gameFinished) {
-    localStorage.removeItem('gameState')
+    resetGameState()
     navigateToHome()
     return
   }

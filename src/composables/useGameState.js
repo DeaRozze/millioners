@@ -20,7 +20,7 @@ export function useGameState() {
     showResult.value = false
     prize.value = 0
     currentQuestionIndex.value = 0
-    localStorage.removeItem('gameState') 
+    localStorage.removeItem('gameState')
   }
 
   const saveGameState = () => {

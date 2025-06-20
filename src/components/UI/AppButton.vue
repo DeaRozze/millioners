@@ -2,20 +2,24 @@
 defineProps({
   primary: {
     type: Boolean,
-    default: true
-  }
+    default: true,
+  },
 })
 
 defineEmits(['click'])
 </script>
 
 <template>
-  <button class="app-button" :class="{ 'app-button--primary': primary }" @click="$emit('click')">
+  <button
+    class="app-button"
+    :class="{ 'app-button--primary': primary }"
+    @click="$emit('click')"
+  >
     <slot></slot>
   </button>
 </template>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .app-button {
   padding: var(--spacing-md) var(--spacing-lg);
   border: none;

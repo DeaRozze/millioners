@@ -4,8 +4,8 @@ import { ref } from 'vue'
 defineProps({
   modelValue: {
     type: Boolean,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -24,16 +24,26 @@ const handleClose = (event) => {
 
 <template>
   <transition name="fade">
-    <div v-if="modelValue" class="modal-overlay" @click.self="handleClose" @mousedown="handleMouseDown">
+    <div
+      v-if="modelValue"
+      class="modal-overlay"
+      @click.self="handleClose"
+      @mousedown="handleMouseDown"
+    >
       <div class="modal-content">
-        <button class="modal-close" @click="handleClose">×</button>
+        <button
+          class="modal-close"
+          @click="handleClose"
+        >
+          ×
+        </button>
         <slot></slot>
       </div>
     </div>
   </transition>
 </template>
 
-<style lang='scss' scoped>
+<style lang="scss" scoped>
 .modal-overlay {
   position: fixed;
   top: 0;

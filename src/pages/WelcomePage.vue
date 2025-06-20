@@ -16,10 +16,13 @@ const startGame = () => {
 }
 
 watch([soundEnabled, musicEnabled], () => {
-  localStorage.setItem('gameSettings', JSON.stringify({
-    soundEnabled: soundEnabled.value,
-    musicEnabled: musicEnabled.value
-  }))
+  localStorage.setItem(
+    'gameSettings',
+    JSON.stringify({
+      soundEnabled: soundEnabled.value,
+      musicEnabled: musicEnabled.value,
+    }),
+  )
 })
 
 onMounted(() => {
@@ -58,11 +61,17 @@ onMounted(() => {
       <h2 class="modal-title">Настройки</h2>
       <div class="modal-settings">
         <label class="setting-item">
-          <input type="checkbox" v-model="soundEnabled">
+          <input
+            type="checkbox"
+            v-model="soundEnabled"
+          />
           Звуковые эффекты
         </label>
         <label class="setting-item">
-          <input type="checkbox" v-model="musicEnabled">
+          <input
+            type="checkbox"
+            v-model="musicEnabled"
+          />
           Фоновая музыка
         </label>
       </div>

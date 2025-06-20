@@ -22,14 +22,13 @@ const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = use
 const checkCurrentQuestion = () => {
   const gameFinished = canGonextQuestion();
   if (gameFinished) {
-    localStorage.removeItem('gameState')
+    localStorage.removeItem('gameState') 
     navigateToHome();
-    console.log('игра зверешена!');
-    return
+    return;
   }
   selectedAnswerId.value = null;
-  showResult.value = false
-}
+  showResult.value = false;
+};
 
 const exitGame = () => {
   resetGameState();

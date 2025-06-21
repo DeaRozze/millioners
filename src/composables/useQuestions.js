@@ -9,6 +9,7 @@ export function useQuestions() {
   const loadQuestions = async () => {
     try {
       isLoading.value = true
+      error.value = null
       questions.value = await fetchQuestions()
 
       if (questions.value.length === 0) {

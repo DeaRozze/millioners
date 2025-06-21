@@ -9,7 +9,7 @@ import { ROUTE_PATHS } from '@/constants/routes'
 
 const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } =
   useGameState()
-const { questions, isLoading, error } = useQuestions()
+const { questions, isLoading, error,loadQuestions  } = useQuestions()
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 
@@ -34,6 +34,7 @@ const checkCurrentQuestion = () => {
 const playAgain = () => {
   resetGameState()
   showResultModal.value = false
+  loadQuestions()
 }
 </script>
 <template>
@@ -53,6 +54,7 @@ const playAgain = () => {
       class="error"
     >
       {{ error }}
+      <AppButton @click="loadQuestions">Повторить попытку</AppButton>
     </div>
     <div v-else-if="!currentQuestion">Нет данных для отображения</div>
     <div v-else>

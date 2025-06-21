@@ -1,8 +1,7 @@
 <script setup>
-import { ref} from 'vue'
+import { ref } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
-import { useRouter } from 'vue-router'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useLocalStorage } from '@vueuse/core'
 
@@ -10,11 +9,6 @@ const isRulesModalOpen = ref(false)
 const isSettingsModalOpen = ref(false)
 const soundEnabled = useLocalStorage('gameSettings.soundEnabled', true)
 const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
-
-const router = useRouter()
-const startGame = () => {
-  router.push(ROUTE_PATHS.GAME)
-}
 </script>
 
 <template>
@@ -24,7 +18,9 @@ const startGame = () => {
       <p class="welcome-page__subtitle">Проверьте свои знания!</p>
 
       <div class="welcome-page__buttons">
-        <AppButton @click="startGame">Начать игру</AppButton>
+        <router-link :to="ROUTE_PATHS.GAME">
+          <AppButton>Начать игру</AppButton>
+        </router-link>
         <AppButton @click="isRulesModalOpen = true">Правила игры</AppButton>
         <AppButton @click="isSettingsModalOpen = true">Настройки</AppButton>
       </div>

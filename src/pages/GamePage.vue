@@ -5,13 +5,11 @@ import { computed } from 'vue'
 import { useAnswerLogic } from '@/composables/useAnswerLogic'
 import { useQuestions } from '@/composables/useQuestions'
 import { useGameState } from '@/composables/useGameState'
-import { useRouter } from 'vue-router'
 import { ROUTE_PATHS } from '@/constants/routes'
 
 const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } =
   useGameState()
 const { questions, isLoading, error } = useQuestions()
-const router = useRouter()
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 
@@ -27,31 +25,23 @@ const checkCurrentQuestion = () => {
   const gameFinished = canGonextQuestion()
   if (gameFinished) {
     resetGameState()
-    router.push(ROUTE_PATHS.HOME)
     return
   }
   selectedAnswerId.value = null
   showResult.value = false
 }
 
-const exitGame = () => {
-  resetGameState()
-  router.push(ROUTE_PATHS.HOME)
-}
-
 const playAgain = () => {
   resetGameState()
   showResultModal.value = false
-}
-const goToHome = () => {
-  resetGameState()
-  router.push(ROUTE_PATHS.HOME)
 }
 </script>
 <template>
   <div class="game-page">
     <div class="game-page__header">
-      <AppButton @click="exitGame">На главную</AppButton>
+      <router-link :to="ROUTE_PATHS.HOME">
+        <AppButton>На главную</AppButton>
+      </router-link>
       <div class="game-page__prize-info">
         <div>Текущий приз: {{ prize }} ₽</div>
         <div v-if="!showResult">Следующий приз: {{ getNextPrize() }} ₽</div>
@@ -91,7 +81,9 @@ const goToHome = () => {
         <h2 class="result-modal__title">Как жаль - вы проиграли!</h2>
         <div class="result-modal__buttons">
           <AppButton @click="playAgain">Играть снова</AppButton>
-          <AppButton @click="goToHome">На главную</AppButton>
+          <router-link :to="ROUTE_PATHS.HOME">
+            <AppButton>На главную</AppButton>
+          </router-link>
         </div>
       </div>
     </AppModal>

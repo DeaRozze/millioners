@@ -9,17 +9,17 @@ import { ROUTE_PATHS } from '@/constants/routes'
 
 const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } =
   useGameState()
-const { questions, isLoading, error,loadQuestions  } = useQuestions()
+const { questions, isLoading, error, loadQuestions } = useQuestions()
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 
-const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = useAnswerLogic(
+const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = useAnswerLogic({
   questions,
   currentQuestionIndex,
   selectedAnswerId,
   showResult,
   prize,
-)
+})
 
 const checkCurrentQuestion = () => {
   const gameFinished = canGonextQuestion()

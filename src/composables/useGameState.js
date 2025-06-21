@@ -1,4 +1,4 @@
-import { ref} from 'vue'
+import { ref } from 'vue'
 import { PRIZE_STEPS } from '@/constants/game'
 import { useLocalStorage } from '@vueuse/core'
 
@@ -10,10 +10,11 @@ export function useGameState() {
 
   const getNextPrize = () => {
     if (prize.value === 0) return PRIZE_STEPS[0]
-    const currentIndex = PRIZE_STEPS.indexOf(prize.value)
-    return currentIndex < PRIZE_STEPS.length - 1
-      ? PRIZE_STEPS[currentIndex + 1]
-      : PRIZE_STEPS[PRIZE_STEPS.length - 1]
+    const currentPosition = PRIZE_STEPS.indexOf(prize.value)
+    if (currentPosition === PRIZE_STEPS.length - 1) {
+      return PRIZE_STEPS[currentPosition]
+    }
+    return PRIZE_STEPS[currentPosition + 1]
   }
 
   const resetGameState = () => {

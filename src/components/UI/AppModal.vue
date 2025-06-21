@@ -15,7 +15,7 @@ const handleMouseDown = (event) => {
   mouseDownTarget.value = event.target
 }
 
-const handleClose = (event) => {
+const closeModal = (event) => {
   if (mouseDownTarget.value === event.currentTarget) {
     emit('update:modelValue', false)
   }
@@ -27,13 +27,13 @@ const handleClose = (event) => {
     <div
       v-if="modelValue"
       class="modal-overlay"
-      @click.self="handleClose"
+      @click.self="closeModal"
       @mousedown="handleMouseDown"
     >
       <div class="modal-content">
         <button
           class="modal-close"
-          @click="handleClose"
+          @click="closeModal"
         >
           ×
         </button>

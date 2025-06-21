@@ -1,22 +1,17 @@
 <script setup>
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
-import { computed} from 'vue'
+import { computed } from 'vue'
 import { useAnswerLogic } from '@/composables/useAnswerLogic'
 import { useQuestions } from '@/composables/useQuestions'
-import { useNavigation } from '@/composables/useNavigation'
 import { useGameState } from '@/composables/useGameState'
+import { useRouter } from 'vue-router'
+import { ROUTE_PATHS } from '@/constants/routes'
 
-const {
-  selectedAnswerId,
-  showResult,
-  prize,
-  currentQuestionIndex,
-  getNextPrize,
-  resetGameState,
-} = useGameState()
+const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } =
+  useGameState()
 const { questions, isLoading, error } = useQuestions()
-const { navigateToHome } = useNavigation()
+const router = useRouter()
 
 const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
 
@@ -32,7 +27,7 @@ const checkCurrentQuestion = () => {
   const gameFinished = canGonextQuestion()
   if (gameFinished) {
     resetGameState()
-    navigateToHome()
+    router.push(ROUTE_PATHS.HOME)
     return
   }
   selectedAnswerId.value = null
@@ -41,7 +36,7 @@ const checkCurrentQuestion = () => {
 
 const exitGame = () => {
   resetGameState()
-  navigateToHome()
+  router.push(ROUTE_PATHS.HOME)
 }
 
 const playAgain = () => {
@@ -50,7 +45,7 @@ const playAgain = () => {
 }
 const goToHome = () => {
   resetGameState()
-  navigateToHome()
+  router.push(ROUTE_PATHS.HOME)
 }
 </script>
 <template>

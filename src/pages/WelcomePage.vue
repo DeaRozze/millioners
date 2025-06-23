@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
+import AuthModal from '@/components/UI/AuthModal.vue'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useLocalStorage } from '@vueuse/core'
 
@@ -56,7 +57,7 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
         </label>
       </div>
     </AppModal>
-    <AuthModal />
+     <AuthModal v-model="isAuthModalOpen" />
   </div>
 </template>
 

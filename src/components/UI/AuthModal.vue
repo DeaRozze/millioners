@@ -11,12 +11,14 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'auth-success'])
 
 const usersStorage = useLocalStorage('millionaire-users', [])
+const currentUser = useLocalStorage('current-user', null)
 
 const isLoginMode = ref(true)
 const errorMessage = ref('')
+const successMessage = ref('')
 const avatarUrl = ref('')
 
 const formData = ref({
@@ -27,54 +29,98 @@ const formData = ref({
 const toggleMode = () => {
   isLoginMode.value = !isLoginMode.value
   errorMessage.value = ''
+  successMessage.value = ''
   avatarUrl.value = ''
 }
 
 const closeModal = () => {
   emit('update:modelValue', false)
 }
-const SignalAvatarError = () => {
+const signalAvatarError = () => {
   errorMessage.value = 'Не удалось загрузить изображение по указанному URL'
   avatarUrl.value = ''
 }
 
-const handleSubmit = () => {
+const handleLogin = () => {
+  errorMessage.value = ''
+  successMessage.value = ''
+
   if (!formData.value.name.trim() || !formData.value.password.trim()) {
     errorMessage.value = 'Заполните все поля'
     return
   }
-  if (!isLoginMode.value && avatarUrl.value && !avatarUrl.value.startsWith('http')) {
+
+  let foundUser = null
+  for (const user of usersStorage.value) {
+    if (user.name === formData.value.name && user.password === formData.value.password) {
+      foundUser = user
+      break
+    }
+  }
+  if (!foundUser) {
+    errorMessage.value = 'Неверное имя пользователя или пароль'
+    return
+  }
+  currentUser.value = foundUser
+  successMessage.value = `Добро пожаловать, ${foundUser.name}!`
+  console.log('Успешный вход:', foundUser)
+  setTimeout(() => {
+    closeModal()
+    emit('auth-success', foundUser)
+  }, 1500)
+}
+const handleRegistration = () => {
+  errorMessage.value = ''
+  successMessage.value = ''
+
+  if (!formData.value.name.trim() || !formData.value.password.trim()) {
+    errorMessage.value = 'Заполните все поля'
+    return
+  }
+
+  if (avatarUrl.value && !avatarUrl.value.startsWith('http')) {
     errorMessage.value = 'Укажите корректный URL (начинается с http/https)'
     return
   }
 
-  if (isLoginMode.value) {
-    const existingUser = usersStorage.value.find((user) => {
-      return user.name === formData.value.name && user.password === formData.value.password
-    })
-    if (!existingUser) {
-      errorMessage.value = 'Неверное имя пользователя или пароль'
-      return
+  let usernameTaken = false
+  for (const user of usersStorage.value) {
+    if (user.name === formData.value.name) {
+      usernameTaken = true
+      break
     }
-    console.log('Успешный вход! Пользователь:', existingUser)
-  } else {
-    const usernameTaken = usersStorage.value.some((user) => {
-      return user.name === formData.value.name
-    })
-    if (usernameTaken) {
-      errorMessage.value = 'Пользователь с таким именем уже существует'
-      return
-    }
-    const newUser = {
-      name: formData.value.name,
-      password: formData.value.password,
-      avatar: avatarUrl.value || null,
-      createdAt: new Date().toISOString(),
-    }
-    usersStorage.value = [...usersStorage.value, newUser]
-    console.log('Успешная регистрация! Новый пользователь:', newUser)
   }
-  closeModal()
+
+  if (usernameTaken) {
+    errorMessage.value = 'Пользователь с таким именем уже существует'
+    return
+  }
+
+  const newUser = {
+    name: formData.value.name,
+    password: formData.value.password,
+    avatar: avatarUrl.value || null,
+  }
+
+  usersStorage.value = [...usersStorage.value, newUser]
+  currentUser.value = newUser
+  successMessage.value = `Регистрация прошла успешно, ${newUser.name}!`
+  console.log('Новый пользователь:', newUser)
+
+  isLoginMode.value = true
+
+  setTimeout(() => {
+    closeModal()
+    emit('auth-success', newUser)
+  }, 1500)
+}
+
+const handleSubmit = () => {
+  if (isLoginMode.value) {
+    handleLogin()
+  } else {
+    handleRegistration()
+  }
 }
 </script>
 
@@ -84,6 +130,12 @@ const handleSubmit = () => {
     @update:modelValue="emit('update:modelValue', $event)"
   >
     <h2 class="auth-modal__title">{{ isLoginMode ? 'Вход' : 'Регистрация' }}</h2>
+    <div
+      v-if="successMessage"
+      class="auth-modal__success"
+    >
+      {{ successMessage }}
+    </div>
     <form
       class="auth-modal__form"
       @submit.prevent="handleSubmit"
@@ -142,7 +194,7 @@ const handleSubmit = () => {
             :src="avatarUrl"
             alt="Аватар"
             class="auth-modal__avatar-image"
-            @error="SignalAvatarError"
+            @error="signalAvatarError"
           />
         </div>
       </div>
@@ -246,6 +298,12 @@ const handleSubmit = () => {
     &:hover {
       color: var(--color-accent);
     }
+  }
+  &__success {
+    color: #4caf50;
+    text-align: center;
+    margin: var(--spacing-sm) 0;
+    font-weight: bold;
   }
 }
 </style>

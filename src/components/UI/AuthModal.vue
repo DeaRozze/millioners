@@ -61,7 +61,8 @@ const handleLogin = () => {
     errorMessage.value = 'Неверное имя пользователя или пароль'
     return
   }
-  currentUser.value = foundUser
+  currentUser.value = { ...foundUser }
+  console.log('Обновлён currentUser:', currentUser.value)
   successMessage.value = `Добро пожаловать, ${foundUser.name}!`
   console.log('Успешный вход:', foundUser)
   setTimeout(() => {
@@ -82,7 +83,6 @@ const handleRegistration = () => {
     errorMessage.value = 'Укажите корректный URL (начинается с http/https)'
     return
   }
-
   let usernameTaken = false
   for (const user of usersStorage.value) {
     if (user.name === formData.value.name) {
@@ -103,7 +103,7 @@ const handleRegistration = () => {
   }
 
   usersStorage.value = [...usersStorage.value, newUser]
-  currentUser.value = newUser
+  currentUser.value = { ...newUser }
   successMessage.value = `Регистрация прошла успешно, ${newUser.name}!`
   console.log('Новый пользователь:', newUser)
 

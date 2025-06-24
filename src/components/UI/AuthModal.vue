@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
 import AppModal from './AppModal.vue'
 import AppButton from './AppButton.vue'
 
@@ -11,6 +12,8 @@ defineProps({
 })
 
 const emit = defineEmits(['update:modelValue'])
+
+const usersStorage = useLocalStorage('millionaire-users', [])
 
 const isLoginMode = ref(true)
 const errorMessage = ref('')
@@ -30,6 +33,10 @@ const toggleMode = () => {
 const closeModal = () => {
   emit('update:modelValue', false)
 }
+const SignalAvatarError = () => {
+  errorMessage.value = 'Не удалось загрузить изображение по указанному URL'
+  avatarUrl.value = ''
+}
 
 const handleSubmit = () => {
   if (!formData.value.name.trim() || !formData.value.password.trim()) {
@@ -41,6 +48,17 @@ const handleSubmit = () => {
     return
   }
 
+  if (isLoginMode.value) {
+    const existingUser = usersStorage.value.find((user) => {
+      return user.name === formData.value.name && user.password === formData.value.password
+    })
+    if (!existingUser) {
+      errorMessage.value = 'Неверное имя пользователя или пароль'
+      return
+    }
+    console.log('Успешный вход! Пользователь:', existingUser)
+  } 
+
   console.log('Форма отправлена:', {
     mode: isLoginMode.value ? 'login' : 'register',
     ...formData.value,
@@ -48,10 +66,6 @@ const handleSubmit = () => {
   })
 
   closeModal()
-}
-const handleAvatarError = () => {
-  errorMessage.value = 'Не удалось загрузить изображение по указанному URL'
-  avatarUrl.value = ''
 }
 </script>
 
@@ -119,7 +133,7 @@ const handleAvatarError = () => {
             :src="avatarUrl"
             alt="Аватар"
             class="auth-modal__avatar-image"
-            @error="handleAvatarError"
+            @error="SignalAvatarError"
           />
         </div>
       </div>

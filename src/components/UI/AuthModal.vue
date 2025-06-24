@@ -57,14 +57,23 @@ const handleSubmit = () => {
       return
     }
     console.log('Успешный вход! Пользователь:', existingUser)
-  } 
-
-  console.log('Форма отправлена:', {
-    mode: isLoginMode.value ? 'login' : 'register',
-    ...formData.value,
-    avatar: avatarUrl.value || null,
-  })
-
+  } else {
+    const usernameTaken = usersStorage.value.some((user) => {
+      return user.name === formData.value.name
+    })
+    if (usernameTaken) {
+      errorMessage.value = 'Пользователь с таким именем уже существует'
+      return
+    }
+    const newUser = {
+      name: formData.value.name,
+      password: formData.value.password,
+      avatar: avatarUrl.value || null,
+      createdAt: new Date().toISOString(),
+    }
+    usersStorage.value = [...usersStorage.value, newUser]
+    console.log('Успешная регистрация! Новый пользователь:', newUser)
+  }
   closeModal()
 }
 </script>

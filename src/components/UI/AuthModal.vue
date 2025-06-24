@@ -99,7 +99,7 @@ const handleRegistration = () => {
   const newUser = {
     name: formData.value.name,
     password: formData.value.password,
-    avatar: avatarUrl.value || null,
+    avatar: avatarUrl.value || '/default-avatar.png',
   }
 
   usersStorage.value = [...usersStorage.value, newUser]

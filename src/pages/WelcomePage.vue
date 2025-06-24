@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import AuthModal from '@/components/UI/AuthModal.vue'
+import UserAvatar from '@/components/UI/UserAvatar.vue'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useLocalStorage } from '@vueuse/core'
 
@@ -18,6 +19,9 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
     <div class="welcome-page__content">
       <h1 class="welcome-page__title">Кто хочет стать миллионером?</h1>
       <p class="welcome-page__subtitle">Проверьте свои знания!</p>
+      <div class="welcome-page__header">
+        <UserAvatar @click="isAuthModalOpen = true" />
+      </div>
 
       <div class="welcome-page__buttons">
         <router-link :to="ROUTE_PATHS.GAME">
@@ -57,7 +61,7 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
         </label>
       </div>
     </AppModal>
-     <AuthModal v-model="isAuthModalOpen" />
+    <AuthModal v-model="isAuthModalOpen" />
   </div>
 </template>
 
@@ -70,6 +74,11 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
   align-items: center;
   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7));
   padding: var(--spacing-xl);
+  &__header {
+    position: absolute;
+    top: var(--spacing-xl);
+    right: var(--spacing-xl);
+  }
 
   &__content {
     text-align: center;

@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import AuthModal from '@/components/UI/AuthModal.vue'
-import UserAvatar from '@/components/UI/UserAvatar.vue'
+import MainUserAvatar from '@/components/UI/MainUserAvatar.vue'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useLocalStorage } from '@vueuse/core'
 
@@ -20,7 +20,7 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
       <h1 class="welcome-page__title">Кто хочет стать миллионером?</h1>
       <p class="welcome-page__subtitle">Проверьте свои знания!</p>
       <div class="welcome-page__header">
-        <UserAvatar @click="isAuthModalOpen = true" />
+        <MainUserAvatar @click="isAuthModalOpen = true" />
       </div>
 
       <div class="welcome-page__buttons">

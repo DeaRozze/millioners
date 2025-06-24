@@ -7,6 +7,10 @@ const currentUser = useLocalStorage('current-user', null)
 const avatarUrl = computed(() => {
   return currentUser.value?.avatar || '/default-avatar.png'
 })
+
+const username = computed(() => {
+  return currentUser.value?.name || 'Гость'
+})
 </script>
 
 <template>
@@ -17,7 +21,7 @@ const avatarUrl = computed(() => {
       class="user-avatar__image"
       @error="(e) => (e.target.src = '/default-avatar.png')"
     />
-    <span class="user-avatar__name">{{ username }}</span>
+    <span class="user-avatar__name">{{ username  }}</span>
   </div>
 </template>
 <style lang="scss" scoped>

@@ -2,9 +2,8 @@
 import { useLocalStorage } from '@vueuse/core'
 import { computed } from 'vue'
 
-const currentUser = useLocalStorage('current-user', null)
-console.log('Тип currentUser:', typeof currentUser.value)
-console.log('Значение currentUser:', currentUser.value)
+const currentUser = useLocalStorage('current-user', {})
+
 
 const avatarUrl = computed(() => {
   return currentUser.value?.avatar || '/default-avatar.png'

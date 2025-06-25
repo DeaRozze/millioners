@@ -12,6 +12,7 @@ const isSettingsModalOpen = ref(false)
 const isAuthModalOpen = ref(false)
 const soundEnabled = useLocalStorage('gameSettings.soundEnabled', true)
 const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
+
 </script>
 
 <template>
@@ -61,7 +62,9 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
         </label>
       </div>
     </AppModal>
-    <AuthModal v-model="isAuthModalOpen" />
+    <AuthModal
+      v-model="isAuthModalOpen"
+    />
   </div>
 </template>
 

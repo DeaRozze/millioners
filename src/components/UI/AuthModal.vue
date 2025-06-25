@@ -14,7 +14,7 @@ defineProps({
 const emit = defineEmits(['update:modelValue', 'auth-success'])
 
 const usersStorage = useLocalStorage('millionaire-users', [])
-const currentUser = useLocalStorage('current-user', null)
+const currentUser = useLocalStorage('current-user', {})
 
 const isLoginMode = ref(true)
 const errorMessage = ref('')
@@ -61,10 +61,8 @@ const handleLogin = () => {
     errorMessage.value = 'Неверное имя пользователя или пароль'
     return
   }
-  currentUser.value = { ...foundUser }
-  console.log('Обновлён currentUser:', currentUser.value)
+  currentUser.value = foundUser
   successMessage.value = `Добро пожаловать, ${foundUser.name}!`
-  console.log('Успешный вход:', foundUser)
   setTimeout(() => {
     closeModal()
     emit('auth-success', foundUser)
@@ -103,9 +101,8 @@ const handleRegistration = () => {
   }
 
   usersStorage.value = [...usersStorage.value, newUser]
-  currentUser.value = { ...newUser }
+  currentUser.value = newUser
   successMessage.value = `Регистрация прошла успешно, ${newUser.name}!`
-  console.log('Новый пользователь:', newUser)
 
   isLoginMode.value = true
 

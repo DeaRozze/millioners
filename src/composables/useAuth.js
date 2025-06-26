@@ -1,13 +1,12 @@
 import { ref } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
-import { errorMessages } from 'vue/compiler-sfc'
 
 export function useAuth() {
   const usersStorage = useLocalStorage('millionaire-users', [])
   const currentUser = useLocalStorage('current-user', {})
   const errorMessage = ref('')
   const successMessage = ref('')
-  const avatarUrl = ref('')
+  const avatarFile = ref(null)
 
   const login = (name, password) => {
     errorMessage.value = ''
@@ -23,7 +22,7 @@ export function useAuth() {
     )
 
     if (!foundUser) {
-      errorMessage.value = 'Неверное имя пользователя или пароль'
+      errorMessage.value = 'Пользователь еще не авторизован'
       return false
     }
 
@@ -41,40 +40,52 @@ export function useAuth() {
       return false
     }
 
-    if (avatarUrl.value && !avatarUrl.value.startsWith('http')) {
-      errorMessage.value = 'Укажите корректный URL (начинается с http/https)'
+    if (!avatarFile.value) {
+      errorMessage.value = 'Пожалуйста, загрузите аватар'
       return false
     }
+
     if (usersStorage.value.some((user) => user.name === name)) {
-      errorMessages.value = 'Пользователь с таким именем уже существует'
+      errorMessage.value = 'Пользователь с таким именем уже существует'
       return false
     }
+
     const newUser = {
       name,
       password,
-      avatar: avatarUrl.value || '/default-avatar.png',
+      avatar: avatarFile.value || '/default-avatar.png',
     }
+
     usersStorage.value = [...usersStorage.value, newUser]
     currentUser.value = newUser
     successMessage.value = `Регистрация прошла успешно, ${newUser.name}!`
     return true
   }
+
   const logout = () => {
     currentUser.value = {}
   }
-  const signalAvatarError = () => {
-    errorMessage.value = 'Не удалось загрузить изображение по указанному URL'
-    avatarUrl.value = ''
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      avatarFile.value = e.target.result
+    }
+    reader.readAsDataURL(file)
   }
+
   return {
     usersStorage,
     currentUser,
     errorMessage,
     successMessage,
-    avatarUrl,
+    avatarFile,
     login,
     register,
     logout,
-    signalAvatarError,
+    handleFileUpload,
   }
 }

@@ -13,7 +13,7 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue', 'auth-success'])
 
-const { currentUser, errorMessage, successMessage, avatarUrl, login, register, signalAvatarError } =
+const { currentUser, errorMessage, successMessage, avatarFile, login, register, handleFileUpload } =
   useAuth()
 
 const isLoginMode = ref(true)
@@ -27,7 +27,7 @@ const toggleMode = () => {
   isLoginMode.value = !isLoginMode.value
   errorMessage.value = ''
   successMessage.value = ''
-  avatarUrl.value = ''
+  avatarFile.value = ''
 }
 
 const closeModal = () => {
@@ -52,6 +52,10 @@ const handleSubmit = () => {
       }, 1500)
     }
   }
+}
+const signalAvatarError = () => {
+  errorMessage.value = 'Не удалось загрузить изображение'
+  avatarFile.value = ''
 }
 </script>
 
@@ -111,18 +115,18 @@ const handleSubmit = () => {
           >Аватар (URL):</label
         >
         <input
-          id="auth-avatar-url"
-          v-model="avatarUrl"
-          type="url"
+          id="auth-avatar"
+          type="file"
+          accept="image/*"
           class="auth-modal__input"
-          placeholder="https://example.com/avatar.jpg"
+          @change="handleFileUpload"
         />
         <div
           class="auth-modal__avatar-preview"
-          v-if="avatarUrl"
+          v-if="avatarFile"
         >
           <img
-            :src="avatarUrl"
+            :src="avatarFile"
             alt="Аватар"
             class="auth-modal__avatar-image"
             @error="signalAvatarError"
@@ -158,6 +162,26 @@ const handleSubmit = () => {
 
 <style lang="scss" scoped>
 .auth-modal {
+  &__input[type='file'] {
+    padding: var(--spacing-sm) 0;
+    border: none;
+    background: transparent;
+    color: var(--color-text);
+
+    &::file-selector-button {
+      padding: var(--spacing-sm) var(--spacing-md);
+      border-radius: var(--border-radius);
+      border: 1px solid var(--color-primary);
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--color-text);
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
   &__title {
     font-size: var(--font-size-xl);
     text-align: center;

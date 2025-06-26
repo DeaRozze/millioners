@@ -1,8 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { useLocalStorage } from '@vueuse/core'
 import AppModal from './AppModal.vue'
 import AppButton from './AppButton.vue'
+import { useAuth } from '@/composables/useAuth'
 
 defineProps({
   modelValue: {
@@ -13,13 +13,10 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue', 'auth-success'])
 
-const usersStorage = useLocalStorage('millionaire-users', [])
-const currentUser = useLocalStorage('current-user', {})
+const { currentUser, errorMessage, successMessage, avatarUrl, login, register, signalAvatarError } =
+  useAuth()
 
 const isLoginMode = ref(true)
-const errorMessage = ref('')
-const successMessage = ref('')
-const avatarUrl = ref('')
 
 const formData = ref({
   name: '',
@@ -36,87 +33,24 @@ const toggleMode = () => {
 const closeModal = () => {
   emit('update:modelValue', false)
 }
-const signalAvatarError = () => {
-  errorMessage.value = 'Не удалось загрузить изображение по указанному URL'
-  avatarUrl.value = ''
-}
-
-const handleLogin = () => {
-  errorMessage.value = ''
-  successMessage.value = ''
-
-  if (!formData.value.name.trim() || !formData.value.password.trim()) {
-    errorMessage.value = 'Заполните все поля'
-    return
-  }
-
-  let foundUser = null
-  for (const user of usersStorage.value) {
-    if (user.name === formData.value.name && user.password === formData.value.password) {
-      foundUser = user
-      break
-    }
-  }
-  if (!foundUser) {
-    errorMessage.value = 'Неверное имя пользователя или пароль'
-    return
-  }
-  currentUser.value = foundUser
-  successMessage.value = `Добро пожаловать, ${foundUser.name}!`
-  setTimeout(() => {
-    closeModal()
-    emit('auth-success', foundUser)
-  }, 1500)
-}
-const handleRegistration = () => {
-  errorMessage.value = ''
-  successMessage.value = ''
-
-  if (!formData.value.name.trim() || !formData.value.password.trim()) {
-    errorMessage.value = 'Заполните все поля'
-    return
-  }
-
-  if (avatarUrl.value && !avatarUrl.value.startsWith('http')) {
-    errorMessage.value = 'Укажите корректный URL (начинается с http/https)'
-    return
-  }
-  let usernameTaken = false
-  for (const user of usersStorage.value) {
-    if (user.name === formData.value.name) {
-      usernameTaken = true
-      break
-    }
-  }
-
-  if (usernameTaken) {
-    errorMessage.value = 'Пользователь с таким именем уже существует'
-    return
-  }
-
-  const newUser = {
-    name: formData.value.name,
-    password: formData.value.password,
-    avatar: avatarUrl.value || '/default-avatar.png',
-  }
-
-  usersStorage.value = [...usersStorage.value, newUser]
-  currentUser.value = newUser
-  successMessage.value = `Регистрация прошла успешно, ${newUser.name}!`
-
-  isLoginMode.value = true
-
-  setTimeout(() => {
-    closeModal()
-    emit('auth-success', newUser)
-  }, 1500)
-}
 
 const handleSubmit = () => {
+  const { name, password } = formData.value
+
   if (isLoginMode.value) {
-    handleLogin()
+    if (login(name, password)) {
+      setTimeout(() => {
+        closeModal()
+        emit('auth-success', currentUser.value)
+      }, 1500)
+    }
   } else {
-    handleRegistration()
+    if (register(name, password)) {
+      setTimeout(() => {
+        closeModal()
+        emit('auth-success', currentUser.value)
+      }, 1500)
+    }
   }
 }
 </script>

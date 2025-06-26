@@ -1,9 +1,8 @@
 <script setup>
-import { useLocalStorage } from '@vueuse/core'
 import { computed } from 'vue'
+import { useAuth } from '@/composables/useAuth'
 
-const currentUser = useLocalStorage('current-user', {})
-
+const { currentUser } = useAuth()
 
 const avatarUrl = computed(() => {
   return currentUser.value?.avatar || '/default-avatar.png'
@@ -24,6 +23,7 @@ const username = computed(() => {
     <span class="user-avatar__name">{{ username }}</span>
   </div>
 </template>
+
 <style lang="scss" scoped>
 .user-avatar {
   display: flex;

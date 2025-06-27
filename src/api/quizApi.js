@@ -1,10 +1,21 @@
-export const fetchQuestions = async (amount = 10) => {
-  try {
-    const response = await fetch(`https://opentdb.com/api.php?amount=${amount}&type=multiple`)
-    if (!response.ok) return []
-    const data = await response.json()
-    if (!data.results || data.results.length === 0) return []
-    return data.results.map((question, index) => ({
+import { useFetch } from '@vueuse/core'
+
+export const useQuizApi = () => {
+  const fetchQuestions = async (amount = 10) => {
+    const { data, error } = await useFetch(
+      `https://opentdb.com/api.php?amount=${amount}&type=multiple`,
+    ).json()
+
+    if (error.value) {
+      console.error('Failed to fetch questions:', error.value)
+      return []
+    }
+
+    if (!data.value?.results || data.value.results.length === 0) {
+      return []
+    }
+
+    return data.value.results.map((question, index) => ({
       id: index + 1,
       text: decodeHtml(question.question),
       answers: shuffleAnswers([
@@ -16,10 +27,9 @@ export const fetchQuestions = async (amount = 10) => {
         })),
       ]),
     }))
-  } catch (error) {
-    console.error('Failed to fetch questions:', error)
-    return []
   }
+
+  return { fetchQuestions }
 }
 const shuffleAnswers = (answers) => {
   return [...answers].sort(() => Math.random() - 0.5)

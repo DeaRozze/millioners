@@ -1,8 +1,9 @@
 <script setup>
-import { ref } from 'vue'
 import AppModal from './AppModal.vue'
 import AppButton from './AppButton.vue'
 import { useAuth } from '@/composables/useAuth'
+import { useTimers } from '@/composables/useTimers'
+import { useAuthForm } from '@/composables/useAuthForm'
 
 defineProps({
   modelValue: {
@@ -16,22 +17,19 @@ const emit = defineEmits(['update:modelValue', 'auth-success'])
 const { currentUser, errorMessage, successMessage, avatarFile, login, register, handleFileUpload } =
   useAuth()
 
-const isLoginMode = ref(true)
+const { setTimer } = useTimers()
 
-const formData = ref({
-  name: '',
-  password: '',
-})
-
-const toggleMode = () => {
-  isLoginMode.value = !isLoginMode.value
-  errorMessage.value = ''
-  successMessage.value = ''
-  avatarFile.value = ''
-}
+const { isLoginMode, formData, toggleMode } = useAuthForm()
 
 const closeModal = () => {
   emit('update:modelValue', false)
+}
+
+const handleAuthSuccess = () => {
+  setTimer(() => {
+    closeModal()
+    emit('auth-success', currentUser.value)
+  }, 1500)
 }
 
 const handleSubmit = () => {
@@ -39,20 +37,15 @@ const handleSubmit = () => {
 
   if (isLoginMode.value) {
     if (login(name, password)) {
-      setTimeout(() => {
-        closeModal()
-        emit('auth-success', currentUser.value)
-      }, 1500)
+      handleAuthSuccess()
     }
   } else {
     if (register(name, password)) {
-      setTimeout(() => {
-        closeModal()
-        emit('auth-success', currentUser.value)
-      }, 1500)
+      handleAuthSuccess()
     }
   }
 }
+
 const signalAvatarError = () => {
   errorMessage.value = 'Не удалось загрузить изображение'
   avatarFile.value = ''

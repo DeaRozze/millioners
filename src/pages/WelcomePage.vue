@@ -12,7 +12,6 @@ const isSettingsModalOpen = ref(false)
 const isAuthModalOpen = ref(false)
 const soundEnabled = useLocalStorage('gameSettings.soundEnabled', true)
 const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
-
 </script>
 
 <template>
@@ -21,7 +20,7 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
       <h1 class="welcome-page__title">Кто хочет стать миллионером?</h1>
       <p class="welcome-page__subtitle">Проверьте свои знания!</p>
       <div class="welcome-page__header">
-        <MainUserAvatar @click="isAuthModalOpen = true" />
+        <MainUserAvatar />
       </div>
 
       <div class="welcome-page__buttons">
@@ -62,9 +61,8 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
         </label>
       </div>
     </AppModal>
-    <AuthModal
-      v-model="isAuthModalOpen"
-    />
+
+    <AuthModal v-model="isAuthModalOpen" />
   </div>
 </template>
 

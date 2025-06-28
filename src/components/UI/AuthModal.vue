@@ -175,6 +175,7 @@ const signalAvatarError = () => {
       }
     }
   }
+
   &__title {
     font-size: var(--font-size-xl);
     text-align: center;
@@ -247,6 +248,7 @@ const signalAvatarError = () => {
       color: var(--color-accent);
     }
   }
+
   &__success {
     color: #4caf50;
     text-align: center;

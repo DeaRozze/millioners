@@ -1,7 +1,8 @@
 <script setup>
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
-import { computed } from 'vue'
+import GameHints from '@/components/UI/GameHints.vue'
+import { computed, ref } from 'vue'
 import { useAnswerLogic } from '@/composables/useAnswerLogic'
 import { useQuestions } from '@/composables/useQuestions'
 import { useGameState } from '@/composables/useGameState'
@@ -11,15 +12,30 @@ const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize,
   useGameState()
 const { questions, isLoading, error, loadQuestions } = useQuestions()
 
-const currentQuestion = computed(() => questions.value[currentQuestionIndex.value])
+const currentQuestion = computed(() => questions.value?.[currentQuestionIndex.value] || null)
+const hiddenAnswers = ref([]) 
 
-const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = useAnswerLogic({
-  questions,
-  currentQuestionIndex,
-  selectedAnswerId,
-  showResult,
-  prize,
-})
+const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal, audiencePercentages } =
+  useAnswerLogic({
+    questions,
+    currentQuestionIndex,
+    selectedAnswerId,
+    showResult,
+    prize,
+    hiddenAnswers,
+  })
+
+const handleFiftyFifty = (answerIds) => {
+  hiddenAnswers.value = answerIds
+}
+
+const handleAudienceHelp = (percentages) => {
+  audiencePercentages.value = percentages
+}
+
+const getAnswerPercentage = (answerId) => {
+  return audiencePercentages.value[answerId] || null
+}
 
 const checkCurrentQuestion = () => {
   const gameFinished = canGonextQuestion()
@@ -29,11 +45,15 @@ const checkCurrentQuestion = () => {
   }
   selectedAnswerId.value = null
   showResult.value = false
+  hiddenAnswers.value = []
+  audiencePercentages.value = {}
 }
 
 const playAgain = () => {
   resetGameState()
   showResultModal.value = false
+  hiddenAnswers.value = []
+  audiencePercentages.value = {}
   loadQuestions()
 }
 </script>
@@ -48,6 +68,7 @@ const playAgain = () => {
         <div v-if="!showResult">Следующий приз: {{ getNextPrize() }} ₽</div>
       </div>
     </div>
+
     <div v-if="isLoading">Загрузка вопросов...</div>
     <div
       v-else-if="error"
@@ -59,25 +80,41 @@ const playAgain = () => {
     <div v-else-if="!currentQuestion">Нет данных для отображения</div>
     <div v-else>
       <div class="game-page__content">
+        <GameHints
+          :answers="currentQuestion.answers"
+          :question="currentQuestion"
+          @useFiftyFifty="handleFiftyFifty"
+          @useAudienceHelp="handleAudienceHelp"
+        />
+
         <h2 class="game-page__question">{{ currentQuestion.text }}</h2>
         <div class="game-page__answers">
           <div
-            v-for="answer in currentQuestion.answers"
-            :key="answer"
-            @click="selectAnswer(answer.id)"
-            :class="['answer', getAnswerClass(answer)]"
+            v-for="{ id, text, isCorrect } in currentQuestion.answers"
+            :key="id"
+            @click="selectAnswer(id)"
+            :class="['answer', getAnswerClass({ id, isCorrect })]"
           >
-            {{ answer.text }}
+            {{ text }}
+            <span
+              v-if="getAnswerPercentage(id)"
+              class="answer__percentage"
+            >
+              {{ getAnswerPercentage(id) }}%
+            </span>
           </div>
         </div>
+
         <AppButton
           v-if="showResult"
           @click="checkCurrentQuestion"
           class="game-page__next-button"
-          >{{ currentQuestionIndex < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }}
+        >
+          {{ currentQuestionIndex < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }}
         </AppButton>
       </div>
     </div>
+
     <AppModal v-model="showResultModal">
       <div class="result-modal">
         <h2 class="result-modal__title">Как жаль - вы проиграли!</h2>
@@ -162,6 +199,24 @@ const playAgain = () => {
   background: rgba(var(--color-primary), 0.1);
   position: relative;
   overflow: hidden;
+
+  &--hidden {
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+  }
+
+  &__percentage {
+    display: block;
+    margin-top: var(--spacing-sm);
+    font-size: var(--font-size-sm);
+    color: var(--color-accent);
+    font-weight: bold;
+  }
 
   &--processing {
     &::after {

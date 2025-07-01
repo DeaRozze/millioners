@@ -4,10 +4,9 @@ import { ref } from 'vue'
 export function useAnswerLogic(props) {
   const isProcessing = ref(false)
   const showResultModal = ref(false)
-  const audiencePercentages = ref({})
 
   const getAnswerClass = (answer) => {
-   if (props.hiddenAnswers?.value?.includes(answer.id)) return 'answer--hidden'
+    if (props.hiddenAnswers?.value?.includes(answer.id)) return 'answer--hidden'
     if (isProcessing.value && props.selectedAnswerId.value === answer.id) {
       return 'answer--selected answer--processing'
     }
@@ -58,6 +57,5 @@ export function useAnswerLogic(props) {
     canGonextQuestion,
     isProcessing,
     showResultModal,
-    audiencePercentages,
   }
 }

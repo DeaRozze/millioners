@@ -2,36 +2,31 @@
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import GameHints from '@/components/UI/GameHints.vue'
-import { computed, ref } from 'vue'
+import { computed} from 'vue'
 import { useAnswerLogic } from '@/composables/useAnswerLogic'
 import { useQuestions } from '@/composables/useQuestions'
 import { useGameState } from '@/composables/useGameState'
 import { ROUTE_PATHS } from '@/constants/routes'
+import { useGameHints } from '@/composables/useGameHints'
 
 const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } =
   useGameState()
 const { questions, isLoading, error, loadQuestions } = useQuestions()
 
 const currentQuestion = computed(() => questions.value?.[currentQuestionIndex.value] || null)
-const hiddenAnswers = ref([]) 
 
-const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal, audiencePercentages } =
-  useAnswerLogic({
-    questions,
-    currentQuestionIndex,
-    selectedAnswerId,
-    showResult,
-    prize,
-    hiddenAnswers,
-  })
+const { hints, hiddenAnswers, audiencePercentages, useFiftyFifty, useAudienceHelp } = useGameHints(
+  computed(() => currentQuestion.value?.answers || []),
+)
 
-const handleFiftyFifty = (answerIds) => {
-  hiddenAnswers.value = answerIds
-}
-
-const handleAudienceHelp = (percentages) => {
-  audiencePercentages.value = percentages
-}
+const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = useAnswerLogic({
+  questions,
+  currentQuestionIndex,
+  selectedAnswerId,
+  showResult,
+  prize,
+  hiddenAnswers,
+})
 
 const getAnswerPercentage = (answerId) => {
   return audiencePercentages.value[answerId] || null
@@ -81,10 +76,9 @@ const playAgain = () => {
     <div v-else>
       <div class="game-page__content">
         <GameHints
-          :answers="currentQuestion.answers"
-          :question="currentQuestion"
-          @useFiftyFifty="handleFiftyFifty"
-          @useAudienceHelp="handleAudienceHelp"
+          :hints="hints"
+          @useFiftyFifty="useFiftyFifty"
+          @useAudienceHelp="useAudienceHelp"
         />
 
         <h2 class="game-page__question">{{ currentQuestion.text }}</h2>

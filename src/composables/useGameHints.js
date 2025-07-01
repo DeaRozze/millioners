@@ -46,12 +46,21 @@ export function useGameHints(answers) {
     hints.value.audienceHelp.used = true
     audiencePercentages.value = percentages
   }
+    const resetHints = () => {
+    hints.value = {
+      fiftyFifty: { used: false },
+      audienceHelp: { used: false }
+    }
+    hiddenAnswers.value = []
+    audiencePercentages.value = {}
+  }
 
   return {
     hints,
     hiddenAnswers,
     audiencePercentages,
     useFiftyFifty,
-    useAudienceHelp
+    useAudienceHelp,
+    resetHints 
   }
 }

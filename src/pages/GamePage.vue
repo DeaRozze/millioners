@@ -2,7 +2,7 @@
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import GameHints from '@/components/UI/GameHints.vue'
-import { computed} from 'vue'
+import { computed } from 'vue'
 import { useAnswerLogic } from '@/composables/useAnswerLogic'
 import { useQuestions } from '@/composables/useQuestions'
 import { useGameState } from '@/composables/useGameState'
@@ -15,9 +15,8 @@ const { questions, isLoading, error, loadQuestions } = useQuestions()
 
 const currentQuestion = computed(() => questions.value?.[currentQuestionIndex.value] || null)
 
-const { hints, hiddenAnswers, audiencePercentages, useFiftyFifty, useAudienceHelp } = useGameHints(
-  computed(() => currentQuestion.value?.answers || []),
-)
+const { hints, hiddenAnswers, audiencePercentages, useFiftyFifty, useAudienceHelp, resetHints } =
+  useGameHints(computed(() => currentQuestion.value?.answers || []))
 
 const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = useAnswerLogic({
   questions,
@@ -46,9 +45,8 @@ const checkCurrentQuestion = () => {
 
 const playAgain = () => {
   resetGameState()
+  resetHints()
   showResultModal.value = false
-  hiddenAnswers.value = []
-  audiencePercentages.value = {}
   loadQuestions()
 }
 </script>

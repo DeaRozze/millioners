@@ -1,17 +1,38 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
 import MainUserAvatar from '@/components/UI/MainUserAvatar.vue'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useLocalStorage } from '@vueuse/core'
+import { useSoundStore } from '@/stores/soundStore'
 
+const soundStore = useSoundStore()
 const isRulesModalOpen = ref(false)
 const isSettingsModalOpen = ref(false)
 const isAuthModalOpen = ref(false)
 const soundEnabled = useLocalStorage('gameSettings.soundEnabled', true)
 const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
+
+watch(soundEnabled, (enabled) => {
+  soundStore.isMuted = !enabled
+})
+
+watch(musicEnabled, (enabled) => {
+  if (enabled && soundStore.currentTrack) {
+    if (soundStore.currentTrack === 'mainTheme') soundStore.playMain()
+    if (soundStore.currentTrack === 'gameTheme') soundStore.playGame()
+  } else {
+    soundStore.stopAll()
+  }
+})
+
+const handleAuthSuccess = () => {
+  if (musicEnabled.value) {
+    soundStore.playMain()
+  }
+}
 </script>
 
 <template>
@@ -62,7 +83,10 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
       </div>
     </AppModal>
 
-    <AuthModal v-model="isAuthModalOpen" />
+    <AuthModal
+      v-model="isAuthModalOpen"
+      @auth-success="handleAuthSuccess"
+    />
   </div>
 </template>
 

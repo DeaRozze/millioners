@@ -2,6 +2,7 @@
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import { useAuth } from '@/composables/auth/useAuth'
+import { useSoundStore } from '@/stores/soundStore'
 
 const { logout } = useAuth()
 
@@ -23,7 +24,9 @@ defineProps({
 const emit = defineEmits(['update:modelValue'])
 
 const handleLogout = () => {
+  const soundStore = useSoundStore()
   logout()
+  soundStore.stopAll()
   emit('update:modelValue', false)
 }
 </script>

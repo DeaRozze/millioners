@@ -4,6 +4,9 @@ import AppButton from '@/components/UI/AppButton.vue'
 import { useAuth } from '@/composables/auth/useAuth'
 import { useTimers } from '@/composables/utils/useTimers'
 import { useAuthForm } from '@/composables/auth/useAuthForm'
+import { useSoundStore } from '@/stores/soundStore'
+
+const soundStore = useSoundStore()
 
 defineProps({
   modelValue: {
@@ -29,6 +32,7 @@ const handleAuthSuccess = () => {
   setTimer(() => {
     closeModal()
     emit('auth-success', currentUser.value)
+    soundStore.playMain() 
   }, 1500)
 }
 

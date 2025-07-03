@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useAuth } from '@/composables/useAuth'
-import ProfileModal from '@/components/UI/ProfileModal.vue'
-import AuthRedirectModal from '@/components/UI/AuthRedirectModal.vue'
+import { useAuth } from '@/composables/auth/useAuth'
+import ProfileModal from '@/components/auth/ProfileModal.vue'
+import AuthRedirectModal from '@/components/auth/AuthRedirectModal.vue'
 
 const { currentUser } = useAuth()
 const isProfileModalOpen = ref(false)

@@ -1,7 +1,7 @@
 <script setup>
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
-import { useAuth } from '@/composables/useAuth'
+import { useAuth } from '@/composables/auth/useAuth'
 
 const { logout } = useAuth()
 

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
-import AuthModal from '@/components/UI/AuthModal.vue'
+import AuthModal from '@/components/auth/AuthModal.vue'
 import MainUserAvatar from '@/components/UI/MainUserAvatar.vue'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useLocalStorage } from '@vueuse/core'

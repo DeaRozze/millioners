@@ -1,13 +1,13 @@
 <script setup>
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
-import GameHints from '@/components/UI/GameHints.vue'
+import GameHints from '@/components/game/GameHints.vue'
 import { computed } from 'vue'
-import { useAnswerLogic } from '@/composables/useAnswerLogic'
-import { useQuestions } from '@/composables/useQuestions'
-import { useGameState } from '@/composables/useGameState'
+import { useAnswerLogic } from '@/composables/game/useAnswerLogic'
+import { useQuestions } from '@/composables/game/useQuestions'
+import { useGameState } from '@/composables/game/useGameState'
 import { ROUTE_PATHS } from '@/constants/routes'
-import { useGameHints } from '@/composables/useGameHints'
+import { useGameHints } from '@/composables/game/useGameHints'
 
 const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } =
   useGameState()

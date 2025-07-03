@@ -1,9 +1,9 @@
 <script setup>
-import AppModal from './AppModal.vue'
-import AppButton from './AppButton.vue'
-import { useAuth } from '@/composables/useAuth'
-import { useTimers } from '@/composables/useTimers'
-import { useAuthForm } from '@/composables/useAuthForm'
+import AppModal from '@/components/UI/AppModal.vue'
+import AppButton from '@/components/UI/AppButton.vue'
+import { useAuth } from '@/composables/auth/useAuth'
+import { useTimers } from '@/composables/utils/useTimers'
+import { useAuthForm } from '@/composables/auth/useAuthForm'
 
 defineProps({
   modelValue: {

@@ -39,11 +39,13 @@ export function useAnswerLogic(props) {
     const selectedAnswer = currentQuestion.answers.find((a) => a.id === answerId)
 
     if (selectedAnswer.isCorrect) {
+      soundStore.playCorrectSound()
       const currentLevel = PRIZE_STEPS.findIndex((step) => step > props.prize.value)
       props.prize.value =
         currentLevel >= 0 ? PRIZE_STEPS[currentLevel] : PRIZE_STEPS[PRIZE_STEPS.length - 1]
       return
     }
+    soundStore.playWrongSound()
     props.prize.value = 0
     soundStore.stopAll()
     showResultModal.value = true

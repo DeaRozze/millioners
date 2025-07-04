@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { useSound } from '@vueuse/sound'
 import mainTheme from '@/assets/sounds/main-theme.mp3'
 import gameTheme from '@/assets/sounds/game-theme.mp3'
+import correctSound from '@/assets/sounds/correct-answer.mp3'
+import wrongSound from '@/assets/sounds/wrong-answer.mp3'
 import { ref } from 'vue'
 
 export const useSoundStore = defineStore('sound', () => {
@@ -20,6 +22,9 @@ export const useSoundStore = defineStore('sound', () => {
     interrupt: true,
     loop: true,
   })
+
+  const { play: playCorrectSound } = useSound(correctSound, { volume })
+  const { play: playWrongSound } = useSound(wrongSound, { volume })
 
   const playMain = () => {
     if (isMuted.value) return
@@ -51,12 +56,14 @@ export const useSoundStore = defineStore('sound', () => {
     }
   }
 
-  return {
+return {
     volume,
     isMuted,
     currentTrack,
     playMain,
     playGame,
+    playCorrectSound, 
+    playWrongSound,
     stopAll,
     toggleMute,
   }

@@ -18,6 +18,11 @@ const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
 soundStore.isMuted = !soundEnabled.value
 soundStore.volume = soundStore.volume || 0.5
 
+const startGame = () => {
+  soundStore.stopAll()
+  soundStore.playGame()
+}
+
 watch(soundEnabled, (enabled) => {
   soundStore.isMuted = !enabled
 })
@@ -55,7 +60,7 @@ onUnmounted(() => {
 
       <div class="welcome-page__buttons">
         <router-link :to="ROUTE_PATHS.GAME">
-          <AppButton>Начать игру</AppButton>
+          <AppButton @click="startGame">Начать игру</AppButton>
         </router-link>
         <AppButton @click="isRulesModalOpen = true">Правила игры</AppButton>
         <AppButton @click="isSettingsModalOpen = true">Настройки</AppButton>

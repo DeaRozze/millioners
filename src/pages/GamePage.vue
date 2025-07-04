@@ -54,6 +54,11 @@ const playAgain = () => {
   soundStore.playGame()
   loadQuestions()
 }
+const handleGoHome = () => {
+  soundStore.stopAll()
+  resetGameState()
+  resetHints()
+}
 
 onMounted(() => {
   soundStore.playGame()
@@ -67,7 +72,7 @@ onUnmounted(() => {
   <div class="game-page">
     <div class="game-page__header">
       <router-link :to="ROUTE_PATHS.HOME">
-        <AppButton @click="soundStore.stopAll()">На главную</AppButton>
+        <AppButton @click="handleGoHome">На главную</AppButton>
       </router-link>
       <div class="game-page__prize-info">
         <div>Текущий приз: {{ prize }} ₽</div>
@@ -126,7 +131,7 @@ onUnmounted(() => {
         <div class="result-modal__buttons">
           <AppButton @click="playAgain">Играть снова</AppButton>
           <router-link :to="ROUTE_PATHS.HOME">
-            <AppButton @click="soundStore.stopAll()">На главную</AppButton>
+            <AppButton @click="handleGoHome">На главную</AppButton>
           </router-link>
         </div>
       </div>

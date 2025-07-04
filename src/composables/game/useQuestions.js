@@ -19,21 +19,22 @@ export function useQuestions() {
       `https://opentdb.com/api.php?amount=${amount}&type=multiple`,
       {
         afterFetch(ctx) {
-          ctx.data = ctx.data.results?.map((question, index) => ({
-            id: index + 1,
-            text: decodeHtml(question.question),
-            answers: shuffleAnswers([
-              { id: 1, text: decodeHtml(question.correct_answer), isCorrect: true },
-              ...question.incorrect_answers.map((ans, i) => ({
-                id: i + 2,
-                text: decodeHtml(ans),
-                isCorrect: false,
-              })),
-            ]),
-          })) || []
+          ctx.data =
+            ctx.data.results?.map((question, index) => ({
+              id: index + 1,
+              text: decodeHtml(question.question),
+              answers: shuffleAnswers([
+                { id: 1, text: decodeHtml(question.correct_answer), isCorrect: true },
+                ...question.incorrect_answers.map((ans, i) => ({
+                  id: i + 2,
+                  text: decodeHtml(ans),
+                  isCorrect: false,
+                })),
+              ]),
+            })) || []
           return ctx
-        }
-      }
+        },
+      },
     ).json()
 
     if (fetchError.value) throw new Error(fetchError.value)
@@ -48,7 +49,7 @@ export function useQuestions() {
       if (questions.value.length === 0) {
         error.value = 'Вопросы не загружены. Попробуйте позже'
       }
-    } catch{
+    } catch {
       error.value = 'Ошибка загрузки'
     } finally {
       isLoading.value = false

@@ -22,13 +22,17 @@ const handleAvatarClick = () => {
 
 <template>
   <div class="user-avatar">
-    <img
-      :src="avatarUrl"
-      :alt="username"
-      class="user-avatar__image"
+    <div
+      class="user-avatar__clickable"
       @click.stop="handleAvatarClick"
-    />
-    <span class="user-avatar__name">{{ username }}</span>
+    >
+      <img
+        :src="avatarUrl"
+        :alt="username"
+        class="user-avatar__image"
+      />
+      <span class="user-avatar__name">{{ username }}</span>
+    </div>
 
     <ProfileModal
       v-model="isProfileModalOpen"
@@ -48,7 +52,13 @@ const handleAvatarClick = () => {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
-  cursor: pointer;
+
+  &__clickable {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    cursor: pointer;
+  }
 
   &__image {
     width: 40px;

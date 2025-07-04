@@ -11,7 +11,7 @@ export const useSoundStore = defineStore('sound', () => {
   const { play: playMainTheme, stop: stopMainTheme } = useSound(mainTheme, {
     volume,
     interrupt: true,
-    loop: true,
+    loop: false,
   })
 
   const playMain = () => {
@@ -39,7 +39,7 @@ export const useSoundStore = defineStore('sound', () => {
     volume,
     isMuted,
     currentTrack,
-    playMain, 
+    playMain,
     stopAll,
     toggleMute,
   }

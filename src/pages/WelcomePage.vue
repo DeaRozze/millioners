@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
@@ -39,6 +39,9 @@ const handleAuthSuccess = () => {
     soundStore.playMain()
   }
 }
+onUnmounted(() => {
+  soundStore.stopAll()
+})
 </script>
 
 <template>

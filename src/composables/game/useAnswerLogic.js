@@ -1,9 +1,11 @@
 import { PRIZE_STEPS } from '@/constants/game'
 import { ref } from 'vue'
+import { useSoundStore } from '@/stores/soundStore'
 
 export function useAnswerLogic(props) {
   const isProcessing = ref(false)
   const showResultModal = ref(false)
+  const soundStore = useSoundStore()
 
   const getAnswerClass = (answer) => {
     if (props.hiddenAnswers?.value?.includes(answer.id)) return 'answer--hidden'
@@ -43,6 +45,7 @@ export function useAnswerLogic(props) {
       return
     }
     props.prize.value = 0
+    soundStore.stopAll()
     showResultModal.value = true
   }
 

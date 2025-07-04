@@ -2,12 +2,15 @@
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import GameHints from '@/components/game/GameHints.vue'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useAnswerLogic } from '@/composables/game/useAnswerLogic'
 import { useQuestions } from '@/composables/game/useQuestions'
 import { useGameState } from '@/composables/game/useGameState'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useGameHints } from '@/composables/game/useGameHints'
+import { useSoundStore } from '@/stores/soundStore'
+
+const soundStore = useSoundStore()
 
 const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } =
   useGameState()
@@ -47,8 +50,12 @@ const playAgain = () => {
   resetGameState()
   resetHints()
   showResultModal.value = false
+  soundStore.playGame() 
   loadQuestions()
 }
+onMounted(() => {
+  soundStore.playGame()
+})
 </script>
 <template>
   <div class="game-page">

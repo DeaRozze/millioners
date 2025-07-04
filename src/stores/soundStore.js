@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { useSound } from '@vueuse/sound'
 import mainTheme from '@/assets/sounds/main-theme.mp3'
+import gameTheme from '@/assets/sounds/game-theme.mp3'
 import { ref } from 'vue'
 
 export const useSoundStore = defineStore('sound', () => {
@@ -14,6 +15,12 @@ export const useSoundStore = defineStore('sound', () => {
     loop: false,
   })
 
+  const { play: playGameTheme, stop: stopGameTheme } = useSound(gameTheme, {
+    volume,
+    interrupt: true,
+    loop: true,
+  })
+
   const playMain = () => {
     if (isMuted.value) return
     stopAll()
@@ -21,8 +28,16 @@ export const useSoundStore = defineStore('sound', () => {
     currentTrack.value = 'mainTheme'
   }
 
+  const playGame = () => {
+    if (isMuted.value) return
+    stopAll()
+    playGameTheme()
+    currentTrack.value = 'gameTheme'
+  }
+
   const stopAll = () => {
     stopMainTheme()
+    stopGameTheme()
     currentTrack.value = null
   }
 
@@ -32,6 +47,7 @@ export const useSoundStore = defineStore('sound', () => {
       stopAll()
     } else {
       if (currentTrack.value === 'mainTheme') playMain()
+      else if (currentTrack.value === 'gameTheme') playGame()
     }
   }
 
@@ -40,6 +56,7 @@ export const useSoundStore = defineStore('sound', () => {
     isMuted,
     currentTrack,
     playMain,
+    playGame,
     stopAll,
     toggleMute,
   }

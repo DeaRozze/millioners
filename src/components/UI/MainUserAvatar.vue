@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useAuth } from '@/composables/auth/useAuth'
 import ProfileModal from '@/components/auth/ProfileModal.vue'
-import AuthRedirectModal from '@/components/auth/AuthRedirectModal.vue'
+import AuthModal from '@/components/auth/AuthModal.vue'
 
 const { currentUser } = useAuth()
 const isProfileModalOpen = ref(false)
@@ -36,7 +36,7 @@ const handleAvatarClick = () => {
       :username="username"
     />
 
-    <AuthRedirectModal
+    <AuthModal
       v-model="isAuthModalOpen"
       v-if="!currentUser?.name"
     />

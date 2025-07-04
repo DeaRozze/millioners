@@ -16,19 +16,16 @@ export const useSoundStore = defineStore('sound', () => {
   const canPlaySound = computed(() => soundEffectsEnabled.value)
   const canPlayMusic = computed(() => backgroundMusicEnabled.value)
 
-  // Sound effects
   const soundEffects = {
     correct: useSound(correctSound, { volume, interrupt: true }),
     wrong: useSound(wrongSound, { volume, interrupt: true })
   }
 
-  // Background music
   const backgroundMusic = {
     main: useSound(mainTheme, { volume, interrupt: true, loop: true }),
     game: useSound(gameTheme, { volume, interrupt: true, loop: true })
   }
 
-  // Public methods
   const playCorrectSound = () => canPlaySound.value && soundEffects.correct.play()
   const playWrongSound = () => canPlaySound.value && soundEffects.wrong.play()
 

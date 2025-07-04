@@ -12,11 +12,9 @@ const isRulesModalOpen = ref(false)
 const isSettingsModalOpen = ref(false)
 const isAuthModalOpen = ref(false)
 
-// Используем свойства из хранилища напрямую
 const soundEffectsEnabled = ref(soundStore.soundEffectsEnabled)
 const backgroundMusicEnabled = ref(soundStore.backgroundMusicEnabled)
 
-// Связываем настройки с хранилищем
 watch(soundEffectsEnabled, (enabled) => {
   soundStore.soundEffectsEnabled = enabled
 })

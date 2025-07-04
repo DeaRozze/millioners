@@ -28,7 +28,7 @@ export function useAnswerLogic(props) {
     )
       return
 
-    soundStore.pauseGameMusic() 
+    soundStore.pauseGameMusic()
     props.selectedAnswerId.value = answerId
     isProcessing.value = true
 
@@ -39,13 +39,13 @@ export function useAnswerLogic(props) {
     const currentQuestion = props.questions.value[props.currentQuestionIndex.value]
     const selectedAnswer = currentQuestion.answers.find((a) => a.id === answerId)
 
+    soundStore[selectedAnswer.isCorrect ? 'playCorrectSound' : 'playWrongSound']()
+
     if (selectedAnswer.isCorrect) {
-      soundStore.playCorrectSound()
       const currentLevel = PRIZE_STEPS.findIndex((step) => step > props.prize.value)
       props.prize.value =
         currentLevel >= 0 ? PRIZE_STEPS[currentLevel] : PRIZE_STEPS[PRIZE_STEPS.length - 1]
     } else {
-      soundStore.playWrongSound()
       props.prize.value = 0
       showResultModal.value = true
     }

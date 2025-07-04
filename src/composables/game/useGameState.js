@@ -1,6 +1,6 @@
 import { ref } from 'vue'
-import { PRIZE_STEPS } from '@/constants/game'
 import { useLocalStorage } from '@vueuse/core'
+import { PRIZE_STEPS } from '@/constants/game'
 
 export function useGameState() {
   const selectedAnswerId = ref(null)

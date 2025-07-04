@@ -5,34 +5,25 @@ import AppButton from '@/components/UI/AppButton.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
 import MainUserAvatar from '@/components/UI/MainUserAvatar.vue'
 import { ROUTE_PATHS } from '@/constants/routes'
-import { useLocalStorage } from '@vueuse/core'
 import { useSoundStore } from '@/stores/soundStore'
 
 const soundStore = useSoundStore()
 const isRulesModalOpen = ref(false)
 const isSettingsModalOpen = ref(false)
 const isAuthModalOpen = ref(false)
-const soundEnabled = useLocalStorage('gameSettings.soundEnabled', true)
-const musicEnabled = useLocalStorage('gameSettings.musicEnabled', true)
 
-soundStore.isMuted = !soundEnabled.value
-soundStore.volume = soundStore.volume || 0.5
+// Используем свойства из хранилища напрямую
+const soundEffectsEnabled = ref(soundStore.soundEffectsEnabled)
+const backgroundMusicEnabled = ref(soundStore.backgroundMusicEnabled)
 
-const startGame = () => {
-  soundStore.stopAll()
-  soundStore.playGame()
-}
-
-watch(soundEnabled, (enabled) => {
-  soundStore.isMuted = !enabled
+// Связываем настройки с хранилищем
+watch(soundEffectsEnabled, (enabled) => {
+  soundStore.soundEffectsEnabled = enabled
 })
 
-watch(musicEnabled, (enabled) => {
-  if (enabled) {
-    soundStore.playMain()
-  } else {
-    soundStore.stopAll()
-  }
+watch(backgroundMusicEnabled, (enabled) => {
+  soundStore.backgroundMusicEnabled = enabled
+  if (!enabled) soundStore.stopAll()
 })
 
 const handleVolumeChange = (event) => {
@@ -40,10 +31,9 @@ const handleVolumeChange = (event) => {
 }
 
 const handleAuthSuccess = () => {
-  if (musicEnabled.value) {
-    soundStore.playMain()
-  }
+  soundStore.playMain()
 }
+
 onUnmounted(() => {
   soundStore.stopAll()
 })
@@ -60,7 +50,7 @@ onUnmounted(() => {
 
       <div class="welcome-page__buttons">
         <router-link :to="ROUTE_PATHS.GAME">
-          <AppButton @click="startGame">Начать игру</AppButton>
+          <AppButton>Начать игру</AppButton>
         </router-link>
         <AppButton @click="isRulesModalOpen = true">Правила игры</AppButton>
         <AppButton @click="isSettingsModalOpen = true">Настройки</AppButton>
@@ -84,10 +74,10 @@ onUnmounted(() => {
           <label class="setting-label">
             <input
               type="checkbox"
-              v-model="soundEnabled"
+              v-model="soundEffectsEnabled"
               class="setting-checkbox"
             />
-            Звуковые эффекты
+            Звуки ответов
           </label>
         </div>
 
@@ -95,7 +85,7 @@ onUnmounted(() => {
           <label class="setting-label">
             <input
               type="checkbox"
-              v-model="musicEnabled"
+              v-model="backgroundMusicEnabled"
               class="setting-checkbox"
             />
             Фоновая музыка
@@ -104,7 +94,7 @@ onUnmounted(() => {
 
         <div
           class="setting-item"
-          v-if="musicEnabled"
+          v-if="backgroundMusicEnabled"
         >
           <label class="setting-label">Громкость музыки</label>
           <input

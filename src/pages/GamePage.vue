@@ -2,7 +2,7 @@
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import GameHints from '@/components/game/GameHints.vue'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useAnswerLogic } from '@/composables/game/useAnswerLogic'
 import { useQuestions } from '@/composables/game/useQuestions'
 import { useGameState } from '@/composables/game/useGameState'
@@ -40,6 +40,7 @@ const checkCurrentQuestion = () => {
     resetGameState()
     return
   }
+  soundStore.resumeGameMusic()
   selectedAnswerId.value = null
   showResult.value = false
   hiddenAnswers.value = []
@@ -50,18 +51,23 @@ const playAgain = () => {
   resetGameState()
   resetHints()
   showResultModal.value = false
-  soundStore.playGame() 
+  soundStore.playGame()
   loadQuestions()
 }
+
 onMounted(() => {
   soundStore.playGame()
+})
+
+onUnmounted(() => {
+  soundStore.stopAll()
 })
 </script>
 <template>
   <div class="game-page">
     <div class="game-page__header">
       <router-link :to="ROUTE_PATHS.HOME">
-        <AppButton>На главную</AppButton>
+        <AppButton @click="soundStore.stopAll()">На главную</AppButton>
       </router-link>
       <div class="game-page__prize-info">
         <div>Текущий приз: {{ prize }} ₽</div>
@@ -120,7 +126,7 @@ onMounted(() => {
         <div class="result-modal__buttons">
           <AppButton @click="playAgain">Играть снова</AppButton>
           <router-link :to="ROUTE_PATHS.HOME">
-            <AppButton>На главную</AppButton>
+            <AppButton @click="soundStore.stopAll()">На главную</AppButton>
           </router-link>
         </div>
       </div>

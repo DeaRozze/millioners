@@ -10,21 +10,33 @@ export const useSoundStore = defineStore('sound', () => {
   const volume = ref(0.5)
   const isMuted = ref(false)
   const currentTrack = ref(null)
+  const isGameMusicPaused = ref(false) 
 
   const { play: playMainTheme, stop: stopMainTheme } = useSound(mainTheme, {
-    volume,
-    interrupt: true,
-    loop: false,
-  })
-
-  const { play: playGameTheme, stop: stopGameTheme } = useSound(gameTheme, {
     volume,
     interrupt: true,
     loop: true,
   })
 
-  const { play: playCorrectSound } = useSound(correctSound, { volume })
-  const { play: playWrongSound } = useSound(wrongSound, { volume })
+  const {
+    play: playGameTheme,
+    stop: stopGameTheme,
+    pause: pauseGameTheme,
+  } = useSound(gameTheme, {
+    volume,
+    interrupt: true,
+    loop: true,
+  })
+
+  const { play: playCorrectSound } = useSound(correctSound, {
+    volume,
+    interrupt: true,
+  })
+
+  const { play: playWrongSound } = useSound(wrongSound, {
+    volume,
+    interrupt: true,
+  })
 
   const playMain = () => {
     if (isMuted.value) return
@@ -38,12 +50,26 @@ export const useSoundStore = defineStore('sound', () => {
     stopAll()
     playGameTheme()
     currentTrack.value = 'gameTheme'
+    isGameMusicPaused.value = false
+  }
+
+  const pauseGameMusic = () => {
+    pauseGameTheme()
+    isGameMusicPaused.value = true
+  }
+
+  const resumeGameMusic = () => {
+    if (isGameMusicPaused.value && !isMuted.value) {
+      playGameTheme()
+      isGameMusicPaused.value = false
+    }
   }
 
   const stopAll = () => {
     stopMainTheme()
     stopGameTheme()
     currentTrack.value = null
+    isGameMusicPaused.value = false
   }
 
   const toggleMute = () => {
@@ -56,13 +82,16 @@ export const useSoundStore = defineStore('sound', () => {
     }
   }
 
-return {
+  return {
     volume,
     isMuted,
     currentTrack,
+    isGameMusicPaused,
     playMain,
     playGame,
-    playCorrectSound, 
+    pauseGameMusic,
+    resumeGameMusic,
+    playCorrectSound,
     playWrongSound,
     stopAll,
     toggleMute,

@@ -17,7 +17,7 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue', 'auth-success'])
 
-const { currentUser, errorMessage, successMessage, avatarFile, login, register, handleFileUpload } =
+const { currentUser, errorMessage, successMessage, avatarFile, openFileDialog, login, register } =
   useAuth()
 
 const { setTimer } = useTimers()
@@ -32,7 +32,7 @@ const handleAuthSuccess = () => {
   setTimer(() => {
     closeModal()
     emit('auth-success', currentUser.value)
-    soundStore.playMain() 
+    soundStore.playMain()
   }, 1500)
 }
 
@@ -50,9 +50,13 @@ const handleSubmit = () => {
   }
 }
 
+const triggerFileInput = () => {
+  openFileDialog()
+}
+
 const signalAvatarError = () => {
   errorMessage.value = 'Не удалось загрузить изображение'
-  avatarFile.value = ''
+  avatarFile.value = null
 }
 </script>
 
@@ -104,30 +108,36 @@ const signalAvatarError = () => {
 
       <div
         v-if="!isLoginMode"
-        class="auth-modal__form-group"
+        class="auth-modal__form-group avatar-upload-group"
       >
-        <label
-          for="auth-avatar-url"
-          class="auth-modal__label"
-          >Аватар (URL):</label
-        >
-        <input
-          id="auth-avatar"
-          type="file"
-          accept="image/*"
-          class="auth-modal__input"
-          @change="handleFileUpload"
-        />
-        <div
-          class="auth-modal__avatar-preview"
-          v-if="avatarFile"
-        >
-          <img
-            :src="avatarFile"
-            alt="Аватар"
-            class="auth-modal__avatar-image"
-            @error="signalAvatarError"
-          />
+        <label class="auth-modal__label">Аватар:</label>
+        <div class="avatar-upload-container">
+          <div
+            class="avatar-preview-wrapper"
+            @click="triggerFileInput"
+          >
+            <div
+              v-if="!avatarFile"
+              class="avatar-placeholder"
+            >
+              <span class="placeholder-icon">👤</span>
+              <span class="placeholder-text">Нажмите для загрузки</span>
+            </div>
+            <img
+              v-else
+              :src="avatarFile"
+              alt="Превью аватара"
+              class="avatar-preview"
+              @error="signalAvatarError"
+            />
+          </div>
+          <AppButton
+            type="button"
+            class="avatar-upload-button"
+            @click="triggerFileInput"
+          >
+            Выбрать файл
+          </AppButton>
         </div>
       </div>
 
@@ -258,6 +268,72 @@ const signalAvatarError = () => {
     text-align: center;
     margin: var(--spacing-sm) 0;
     font-weight: bold;
+  }
+}
+.avatar-upload-group {
+  margin-top: var(--spacing-md);
+}
+
+.avatar-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.avatar-preview-wrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px dashed var(--color-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: rgba(var(--color-primary), 0.05);
+
+  &:hover {
+    border-color: var(--color-accent);
+    background-color: rgba(var(--color-primary), 0.1);
+    transform: scale(1.02);
+  }
+}
+
+.avatar-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--spacing-sm);
+
+  .placeholder-icon {
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .placeholder-text {
+    font-size: var(--font-size-sm);
+    line-height: 1.3;
+  }
+}
+
+.avatar-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-upload-button {
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  background: rgba(var(--color-primary), 0.1);
+
+  &:hover {
+    background: rgba(var(--color-primary), 0.2);
   }
 }
 </style>

@@ -1,5 +1,6 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
+import { useFileDialog } from '@vueuse/core'
 
 export function useAuth() {
   const usersStorage = useLocalStorage('millionaire-users', [])
@@ -7,6 +8,29 @@ export function useAuth() {
   const errorMessage = ref('')
   const successMessage = ref('')
   const avatarFile = ref(null)
+
+  const {
+    files,
+    open: openFileDialog,
+    reset: resetFileDialog,
+  } = useFileDialog({
+    accept: 'image/*',
+    multiple: false,
+  })
+
+  watch(files, (newFiles) => {
+    if (!newFiles) return
+
+    const file = newFiles[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      avatarFile.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+    resetFileDialog()
+  })
 
   const login = (name, password) => {
     errorMessage.value = ''
@@ -53,7 +77,7 @@ export function useAuth() {
     const newUser = {
       name,
       password,
-      avatar: avatarFile.value || '/default-avatar.png',
+      avatar: avatarFile.value,
     }
 
     usersStorage.value = [...usersStorage.value, newUser]
@@ -66,26 +90,15 @@ export function useAuth() {
     currentUser.value = {}
   }
 
-  const handleFileUpload = (event) => {
-    const file = event.target.files[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      avatarFile.value = e.target.result
-    }
-    reader.readAsDataURL(file)
-  }
-
   return {
     usersStorage,
     currentUser,
     errorMessage,
     successMessage,
     avatarFile,
+    openFileDialog,
     login,
     register,
     logout,
-    handleFileUpload,
   }
 }

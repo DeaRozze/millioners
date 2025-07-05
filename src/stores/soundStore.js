@@ -22,7 +22,7 @@ export const useSoundStore = defineStore('sound', () => {
   }
 
   const backgroundMusic = {
-    main: useSound(mainTheme, { volume, interrupt: true, loop: true }),
+    main: useSound(mainTheme, { volume, interrupt: true, loop: false }),
     game: useSound(gameTheme, { volume, interrupt: true, loop: true })
   }
 

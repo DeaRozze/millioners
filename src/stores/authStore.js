@@ -1,36 +1,17 @@
-import { ref, watch } from 'vue'
-import { useLocalStorage } from '@vueuse/core'
+import { defineStore } from 'pinia'
+import { ref, computed, watch } from 'vue'
 import { useFileDialog } from '@vueuse/core'
+import { useLocalStorage } from '@vueuse/core'
 
-export function useAuth() {
-  const usersStorage = useLocalStorage('millionaire-users', [])
+export const useAuthStore = defineStore('auth', () => {
+  const users = useLocalStorage('millionaire-users', [])
   const currentUser = useLocalStorage('current-user', {})
+
   const errorMessage = ref('')
   const successMessage = ref('')
   const avatarFile = ref(null)
 
-  const {
-    files,
-    open: openFileDialog,
-    reset: resetFileDialog,
-  } = useFileDialog({
-    accept: 'image/*',
-    multiple: false,
-  })
-
-  watch(files, (newFiles) => {
-    if (!newFiles) return
-
-    const file = newFiles[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      avatarFile.value = e.target.result
-    }
-    reader.readAsDataURL(file)
-    resetFileDialog()
-  })
+  const isAuthenticated = computed(() => !!currentUser.value?.name)
 
   const login = (name, password) => {
     errorMessage.value = ''
@@ -41,9 +22,7 @@ export function useAuth() {
       return false
     }
 
-    const foundUser = usersStorage.value.find(
-      (user) => user.name === name && user.password === password,
-    )
+    const foundUser = users.value.find((user) => user.name === name && user.password === password)
 
     if (!foundUser) {
       errorMessage.value = 'Пользователь еще не авторизован'
@@ -69,7 +48,7 @@ export function useAuth() {
       return false
     }
 
-    if (usersStorage.value.some((user) => user.name === name)) {
+    if (users.value.some((user) => user.name === name)) {
       errorMessage.value = 'Пользователь с таким именем уже существует'
       return false
     }
@@ -80,25 +59,49 @@ export function useAuth() {
       avatar: avatarFile.value,
     }
 
-    usersStorage.value = [...usersStorage.value, newUser]
+    users.value.push(newUser)
     currentUser.value = newUser
     successMessage.value = `Регистрация прошла успешно, ${newUser.name}!`
     return true
   }
-
   const logout = () => {
     currentUser.value = {}
   }
 
-  return {
-    usersStorage,
+  const {
+    files,
+    open: openFileDialog,
+    reset: resetFileDialog,
+  } = useFileDialog({
+    accept: 'image/*',
+    multiple: false,
+  })
+
+  watch(files, (newFiles) => {
+    if (!newFiles) return
+    const file = newFiles[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      avatarFile.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+    resetFileDialog()
+  })
+
+    return {
+    users,
     currentUser,
     errorMessage,
     successMessage,
     avatarFile,
-    openFileDialog,
+
+    isAuthenticated,
+
     login,
     register,
     logout,
+    openFileDialog,
   }
-}
+})

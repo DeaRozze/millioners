@@ -1,10 +1,12 @@
 <script setup>
-import { ref, computed } from 'vue'
-import { useAuth } from '@/composables/auth/useAuth'
+import { storeToRefs } from 'pinia'
+import { useAuthStore } from '@/stores/authStore'
 import ProfileModal from '@/components/auth/ProfileModal.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
+import { computed, ref } from 'vue'
 
-const { currentUser } = useAuth()
+const authStore = useAuthStore()
+const { currentUser } = storeToRefs(authStore)
 const isProfileModalOpen = ref(false)
 const isAuthModalOpen = ref(false)
 

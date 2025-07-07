@@ -1,12 +1,16 @@
 <script setup>
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
-import { useAuth } from '@/composables/auth/useAuth'
+import { useAuthStore } from '@/stores/authStore'
+import { storeToRefs } from 'pinia'
 import { useTimers } from '@/composables/utils/useTimers'
 import { useAuthForm } from '@/composables/auth/useAuthForm'
 import { useSoundStore } from '@/stores/soundStore'
 
 const soundStore = useSoundStore()
+const authStore = useAuthStore()
+
+const { errorMessage, successMessage, avatarFile, currentUser } = storeToRefs(authStore)
 
 defineProps({
   modelValue: {
@@ -17,11 +21,7 @@ defineProps({
 
 const emit = defineEmits(['update:modelValue', 'auth-success'])
 
-const { currentUser, errorMessage, successMessage, avatarFile, openFileDialog, login, register } =
-  useAuth()
-
 const { setTimer } = useTimers()
-
 const { isLoginMode, formData, toggleMode } = useAuthForm()
 
 const closeModal = () => {
@@ -40,23 +40,23 @@ const handleSubmit = () => {
   const { name, password } = formData.value
 
   if (isLoginMode.value) {
-    if (login(name, password)) {
+    if (authStore.login(name, password)) {
       handleAuthSuccess()
     }
   } else {
-    if (register(name, password)) {
+    if (authStore.register(name, password)) {
       handleAuthSuccess()
     }
   }
 }
 
 const triggerFileInput = () => {
-  openFileDialog()
+  authStore.openFileDialog()
 }
 
 const signalAvatarError = () => {
-  errorMessage.value = 'Не удалось загрузить изображение'
-  avatarFile.value = null
+  authStore.errorMessage = 'Не удалось загрузить изображение'
+  authStore.avatarFile = null
 }
 </script>
 

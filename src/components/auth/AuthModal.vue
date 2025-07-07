@@ -4,13 +4,12 @@ import AppButton from '@/components/UI/AppButton.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { storeToRefs } from 'pinia'
 import { useTimers } from '@/composables/utils/useTimers'
-import { useAuthForm } from '@/composables/auth/useAuthForm'
 import { useSoundStore } from '@/stores/soundStore'
 
 const soundStore = useSoundStore()
 const authStore = useAuthStore()
 
-const { errorMessage, successMessage, avatarFile, currentUser } = storeToRefs(authStore)
+const { errorMessage, successMessage, avatarFile, isLoginMode, formData } = storeToRefs(authStore)
 
 defineProps({
   modelValue: {
@@ -22,7 +21,6 @@ defineProps({
 const emit = defineEmits(['update:modelValue', 'auth-success'])
 
 const { setTimer } = useTimers()
-const { isLoginMode, formData, toggleMode } = useAuthForm()
 
 const closeModal = () => {
   emit('update:modelValue', false)
@@ -31,7 +29,7 @@ const closeModal = () => {
 const handleAuthSuccess = () => {
   setTimer(() => {
     closeModal()
-    emit('auth-success', currentUser.value)
+    emit('auth-success')
     soundStore.playMain()
   }, 1500)
 }
@@ -158,7 +156,7 @@ const signalAvatarError = () => {
         <button
           type="button"
           class="auth-modal__toggle-mode"
-          @click="toggleMode"
+          @click="authStore.toggleMode"
         >
           {{ isLoginMode ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти' }}
         </button>

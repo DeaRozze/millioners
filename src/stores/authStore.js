@@ -6,6 +6,19 @@ import { useLocalStorage } from '@vueuse/core'
 export const useAuthStore = defineStore('auth', () => {
   const users = useLocalStorage('millionaire-users', [])
   const currentUser = useLocalStorage('current-user', {})
+  const isLoginMode = ref(true)
+  const formData = ref({
+    name: '',
+    password: '',
+  })
+
+  const toggleMode = () => {
+    isLoginMode.value = !isLoginMode.value
+    formData.value = { name: '', password: '' }
+    errorMessage.value = ''
+    successMessage.value = ''
+    avatarFile.value = null
+  }
 
   const errorMessage = ref('')
   const successMessage = ref('')
@@ -25,7 +38,7 @@ export const useAuthStore = defineStore('auth', () => {
     const foundUser = users.value.find((user) => user.name === name && user.password === password)
 
     if (!foundUser) {
-      errorMessage.value = 'Пользователь еще не авторизован'
+      errorMessage.value = 'Неверное имя пользователя или пароль'
       return false
     }
 
@@ -64,6 +77,7 @@ export const useAuthStore = defineStore('auth', () => {
     successMessage.value = `Регистрация прошла успешно, ${newUser.name}!`
     return true
   }
+
   const logout = () => {
     currentUser.value = {}
   }
@@ -90,12 +104,14 @@ export const useAuthStore = defineStore('auth', () => {
     resetFileDialog()
   })
 
-    return {
+  return {
     users,
     currentUser,
     errorMessage,
     successMessage,
     avatarFile,
+    isLoginMode,
+    formData,
 
     isAuthenticated,
 
@@ -103,5 +119,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     openFileDialog,
+    toggleMode,
   }
 })

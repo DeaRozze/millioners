@@ -5,15 +5,17 @@ import GameHints from '@/components/game/GameHints.vue'
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useAnswerLogic } from '@/composables/game/useAnswerLogic'
 import { useQuestions } from '@/composables/game/useQuestions'
-import { useGameState } from '@/composables/game/useGameState'
+import { useGameStore } from '@/stores/gameStore'
+import { storeToRefs } from 'pinia'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useGameHints } from '@/composables/game/useGameHints'
 import { useSoundStore } from '@/stores/soundStore'
 
 const soundStore = useSoundStore()
 
-const { selectedAnswerId, showResult, prize, currentQuestionIndex, getNextPrize, resetGameState } =
-  useGameState()
+const gameStore = useGameStore()
+const { selectedAnswerId, showResult, prize, currentQuestionIndex, nextPrize } =
+  storeToRefs(gameStore)
 const { questions, isLoading, error, loadQuestions } = useQuestions()
 
 const currentQuestion = computed(() => questions.value?.[currentQuestionIndex.value] || null)
@@ -21,7 +23,7 @@ const currentQuestion = computed(() => questions.value?.[currentQuestionIndex.va
 const { hints, hiddenAnswers, audiencePercentages, useFiftyFifty, useAudienceHelp, resetHints } =
   useGameHints(computed(() => currentQuestion.value?.answers || []))
 
-const { getAnswerClass, selectAnswer, canGonextQuestion, showResultModal } = useAnswerLogic({
+const { getAnswerClass, selectAnswer, showResultModal } = useAnswerLogic({
   questions,
   currentQuestionIndex,
   selectedAnswerId,
@@ -35,9 +37,9 @@ const getAnswerPercentage = (answerId) => {
 }
 
 const checkCurrentQuestion = () => {
-  const gameFinished = canGonextQuestion()
+  const gameFinished = currentQuestionIndex.value >= questions.value.length - 1
   if (gameFinished) {
-    resetGameState()
+    gameStore.resetGameState()
     return
   }
   soundStore.resumeGameMusic()
@@ -48,7 +50,7 @@ const checkCurrentQuestion = () => {
 }
 
 const playAgain = () => {
-  resetGameState()
+  gameStore.resetGameState()
   resetHints()
   showResultModal.value = false
   soundStore.playGame()
@@ -56,7 +58,7 @@ const playAgain = () => {
 }
 const handleGoHome = () => {
   soundStore.stopAll()
-  resetGameState()
+  gameStore.resetGameState()
   resetHints()
 }
 
@@ -76,7 +78,7 @@ onUnmounted(() => {
       </router-link>
       <div class="game-page__prize-info">
         <div>Текущий приз: {{ prize }} ₽</div>
-        <div v-if="!showResult">Следующий приз: {{ getNextPrize() }} ₽</div>
+        <div v-if="!showResult">Следующий приз: {{ nextPrize }} ₽</div>
       </div>
     </div>
 

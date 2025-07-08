@@ -1,13 +1,33 @@
 import { PRIZE_STEPS } from '@/constants/game'
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 import { useSoundStore } from '@/stores/soundStore'
 
-export function useAnswerLogic(props) {
+interface Answer {
+  id: number
+  text: string
+  isCorrect: boolean
+}
+
+interface Question {
+  question: string
+  answers: Answer[]
+}
+
+interface UseAnswerLogicProps {
+  questions: Ref<Question[]>
+  selectedAnswerId: Ref<number | null>
+  showResult: Ref<boolean>
+  prize: Ref<number>
+  currentQuestionIndex: Ref<number>
+  hiddenAnswers?: Ref<number[]>
+}
+
+export function useAnswerLogic(props: UseAnswerLogicProps) {
   const isProcessing = ref(false)
   const showResultModal = ref(false)
   const soundStore = useSoundStore()
 
-  const getAnswerClass = (answer) => {
+  const getAnswerClass = (answer: Answer): string => {
     if (props.hiddenAnswers?.value?.includes(answer.id)) return 'answer--hidden'
     if (isProcessing.value && props.selectedAnswerId.value === answer.id) {
       return 'answer--selected answer--processing'
@@ -20,7 +40,7 @@ export function useAnswerLogic(props) {
     return ''
   }
 
-  const selectAnswer = async (answerId) => {
+  const selectAnswer = async (answerId: number): Promise<void> => {
     if (
       props.showResult.value ||
       isProcessing.value ||
@@ -36,8 +56,11 @@ export function useAnswerLogic(props) {
 
     isProcessing.value = false
     props.showResult.value = true
+
     const currentQuestion = props.questions.value[props.currentQuestionIndex.value]
     const selectedAnswer = currentQuestion.answers.find((a) => a.id === answerId)
+
+    if (!selectedAnswer) return
 
     soundStore[selectedAnswer.isCorrect ? 'playCorrectSound' : 'playWrongSound']()
 
@@ -51,7 +74,7 @@ export function useAnswerLogic(props) {
     }
   }
 
-  const canGonextQuestion = () => {
+  const canGonextQuestion = (): boolean => {
     props.currentQuestionIndex.value++
     return props.currentQuestionIndex.value >= props.questions.value.length
   }

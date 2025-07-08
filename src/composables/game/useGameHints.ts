@@ -1,21 +1,47 @@
 import { useLocalStorage } from '@vueuse/core'
-import { ref } from 'vue'
+import { ref, Ref } from 'vue'
 
-export function useGameHints(answers) {
-  const hints = useLocalStorage('game-hints', {
+interface Answer {
+  id: number
+  text: string
+  isCorrect: boolean
+}
+
+interface Hint {
+  used: boolean
+}
+
+interface Hints {
+  fiftyFifty: Hint
+  audienceHelp: Hint
+}
+
+interface GameHintsReturn {
+  hints: Ref<Hints>
+  hiddenAnswers: Ref<number[]>
+  audiencePercentages: Ref<Record<number, number>>
+  useFiftyFifty: () => void
+  useAudienceHelp: () => void
+  resetHints: () => void
+}
+
+export function useGameHints(answers: Ref<Answer[]>): GameHintsReturn {
+  const hints = useLocalStorage<Hints>('game-hints', {
     fiftyFifty: { used: false },
     audienceHelp: { used: false },
   })
 
-  const hiddenAnswers = ref([])
-  const audiencePercentages = ref({})
+  const hiddenAnswers = ref<number[]>([])
+  const audiencePercentages = ref<Record<number, number>>({})
 
-  const generateAudiencePercentages = () => {
+  const generateAudiencePercentages = (): Record<number, number> => {
     const correctAnswer = answers.value.find((answer) => answer.isCorrect)
+    if (!correctAnswer) return {}
+
     const otherAnswers = answers.value.filter((answer) => !answer.isCorrect)
 
     const correctPercent = Math.floor(Math.random() * 30) + 50
-    const percentages = { [correctAnswer.id]: correctPercent }
+    const percentages: Record<number, number> = { [correctAnswer.id]: correctPercent }
 
     let remaining = 100 - correctPercent
     otherAnswers.forEach((answer, index) => {
@@ -28,7 +54,7 @@ export function useGameHints(answers) {
     return percentages
   }
 
-  const useFiftyFifty = () => {
+  const useFiftyFifty = (): void => {
     const incorrectAnswers = answers.value
       .filter((answer) => !answer.isCorrect)
       .map((answer) => answer.id)
@@ -39,12 +65,13 @@ export function useGameHints(answers) {
     hiddenAnswers.value = toRemove
   }
 
-  const useAudienceHelp = () => {
+  const useAudienceHelp = (): void => {
     const percentages = generateAudiencePercentages()
     hints.value.audienceHelp.used = true
     audiencePercentages.value = percentages
   }
-  const resetHints = () => {
+
+  const resetHints = (): void => {
     hints.value = {
       fiftyFifty: { used: false },
       audienceHelp: { used: false },

@@ -1,32 +1,56 @@
 import { ref, onMounted } from 'vue'
 import { useFetch } from '@vueuse/core'
+import type { Ref } from 'vue'
 
-export function useQuestions() {
-  const questions = ref([])
-  const isLoading = ref(true)
-  const error = ref(null)
+interface Question {
+  id: number
+  text: string
+  answers: Answer[]
+}
 
-  const shuffleAnswers = (answers) => [...answers].sort(() => Math.random() - 0.5)
+interface Answer {
+  id: number
+  text: string
+  isCorrect: boolean
+}
 
-  const decodeHtml = (text) => {
-    const textArea = document.createElement('textarea')
-    textArea.innerHTML = text
-    return textArea.textContent
+interface UseQuestionsReturn {
+  questions: Ref<Question[]>
+  isLoading: Ref<boolean>
+  error: Ref<string | null>
+  loadQuestions: () => Promise<void>
+}
+
+export function useQuestions(): UseQuestionsReturn {
+  const questions = ref<Question[]>([])
+  const isLoading = ref<boolean>(true)
+  const error = ref<string | null>(null)
+
+  const shuffleAnswers = (answers: Omit<Answer, 'id'>[]): Answer[] => {
+    return [...answers].map((answer, index) => ({
+      ...answer,
+      id: index + 1,
+    })).sort(() => Math.random() - 0.5)
   }
 
-  const fetchQuestions = async (amount = 10) => {
+  const decodeHtml = (text: string): string => {
+    const textArea = document.createElement('textarea')
+    textArea.innerHTML = text
+    return textArea.textContent || ''
+  }
+
+  const fetchQuestions = async (amount = 10): Promise<Question[]> => {
     const { data, error: fetchError } = await useFetch(
       `https://opentdb.com/api.php?amount=${amount}&type=multiple`,
       {
         afterFetch(ctx) {
           ctx.data =
-            ctx.data.results?.map((question, index) => ({
+            ctx.data.results?.map((question: any, index: number) => ({
               id: index + 1,
               text: decodeHtml(question.question),
               answers: shuffleAnswers([
-                { id: 1, text: decodeHtml(question.correct_answer), isCorrect: true },
-                ...question.incorrect_answers.map((ans, i) => ({
-                  id: i + 2,
+                { text: decodeHtml(question.correct_answer), isCorrect: true },
+                ...question.incorrect_answers.map((ans: string) => ({
                   text: decodeHtml(ans),
                   isCorrect: false,
                 })),
@@ -41,7 +65,7 @@ export function useQuestions() {
     return data.value
   }
 
-  const loadQuestions = async () => {
+  const loadQuestions = async (): Promise<void> => {
     isLoading.value = true
     error.value = null
     try {
@@ -49,7 +73,7 @@ export function useQuestions() {
       if (questions.value.length === 0) {
         error.value = 'Вопросы не загружены. Попробуйте позже'
       }
-    } catch {
+    } catch (err) {
       error.value = 'Ошибка загрузки'
     } finally {
       isLoading.value = false

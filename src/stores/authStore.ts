@@ -3,16 +3,33 @@ import { ref, computed, watch } from 'vue'
 import { useFileDialog } from '@vueuse/core'
 import { useLocalStorage } from '@vueuse/core'
 
+interface User {
+  name: string
+  password: string
+  avatar: string | null
+}
+
+interface AuthForm {
+  name: string
+  password: string
+}
+
 export const useAuthStore = defineStore('auth', () => {
-  const users = useLocalStorage('millionaire-users', [])
-  const currentUser = useLocalStorage('current-user', {})
-  const isLoginMode = ref(true)
-  const formData = ref({
+  const users = useLocalStorage<User[]>('millionaire-users', [])
+  const currentUser = useLocalStorage<User>('current-user', {} as User)
+  const isLoginMode = ref<boolean>(true)
+  const formData = ref<AuthForm>({
     name: '',
     password: '',
   })
 
-  const toggleMode = () => {
+  const errorMessage = ref<String>('')
+  const successMessage = ref<String>('')
+  const avatarFile = ref<string | null>(null)
+
+  const isAuthenticated = computed<boolean>(() => !!currentUser.value?.name)
+
+  const toggleMode = (): void => {
     isLoginMode.value = !isLoginMode.value
     formData.value = { name: '', password: '' }
     errorMessage.value = ''
@@ -20,13 +37,7 @@ export const useAuthStore = defineStore('auth', () => {
     avatarFile.value = null
   }
 
-  const errorMessage = ref('')
-  const successMessage = ref('')
-  const avatarFile = ref(null)
-
-  const isAuthenticated = computed(() => !!currentUser.value?.name)
-
-  const login = (name, password) => {
+  const login = (name: string, password: string): boolean => {
     errorMessage.value = ''
     successMessage.value = ''
 
@@ -78,8 +89,8 @@ export const useAuthStore = defineStore('auth', () => {
     return true
   }
 
-  const logout = () => {
-    currentUser.value = {}
+  const logout = (): void => {
+    currentUser.value = {} as User
   }
 
   const {
@@ -98,7 +109,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     const reader = new FileReader()
     reader.onload = (e) => {
-      avatarFile.value = e.target.result
+      avatarFile.value = e.target.result as string
     }
     reader.readAsDataURL(file)
     resetFileDialog()

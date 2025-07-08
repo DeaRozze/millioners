@@ -4,32 +4,34 @@ import mainTheme from '@/assets/sounds/main-theme.mp3'
 import gameTheme from '@/assets/sounds/game-theme.mp3'
 import correctSound from '@/assets/sounds/correct-answer.mp3'
 import wrongSound from '@/assets/sounds/wrong-answer.mp3'
-import { ref, computed } from 'vue'
+import { ref, unref, computed } from 'vue'
+
+type SoundTrack = 'main' | 'game' | null
 
 export const useSoundStore = defineStore('sound', () => {
   const volume = ref(0.5)
-  const soundEffectsEnabled = ref(true)
-  const backgroundMusicEnabled = ref(true)
-  const currentTrack = ref(null)
-  const isGameMusicPaused = ref(false)
+  const soundEffectsEnabled = ref<boolean>(true)
+  const backgroundMusicEnabled = ref<boolean>(true)
+  const currentTrack = ref<SoundTrack>(null)
+  const isGameMusicPaused = ref<boolean>(false)
 
-  const canPlaySound = computed(() => soundEffectsEnabled.value)
-  const canPlayMusic = computed(() => backgroundMusicEnabled.value)
+  const canPlaySound = computed<boolean>(() => soundEffectsEnabled.value)
+  const canPlayMusic = computed<boolean>(() => backgroundMusicEnabled.value)
 
   const soundEffects = {
-    correct: useSound(correctSound, { volume, interrupt: true }),
-    wrong: useSound(wrongSound, { volume, interrupt: true })
+    correct: useSound(correctSound, { volume: unref(volume), interrupt: true }),
+    wrong: useSound(wrongSound, { volume: unref(volume), interrupt: true }),
   }
 
   const backgroundMusic = {
-    main: useSound(mainTheme, { volume, interrupt: true, loop: false }),
-    game: useSound(gameTheme, { volume, interrupt: true, loop: true })
+    main: useSound(mainTheme, { volume: unref(volume), interrupt: true, loop: false }),
+    game: useSound(gameTheme, { volume: unref(volume), interrupt: true, loop: true }),
   }
 
-  const playCorrectSound = () => canPlaySound.value && soundEffects.correct.play()
-  const playWrongSound = () => canPlaySound.value && soundEffects.wrong.play()
+  const playCorrectSound = (): void => canPlaySound.value && soundEffects.correct.play()
+  const playWrongSound = (): void => canPlaySound.value && soundEffects.wrong.play()
 
-  const playMain = () => {
+  const playMain = (): void => {
     if (!canPlayMusic.value) return
     stopAll()
     backgroundMusic.main.play()
@@ -37,7 +39,7 @@ export const useSoundStore = defineStore('sound', () => {
     isGameMusicPaused.value = false
   }
 
-  const playGame = () => {
+  const playGame = (): void => {
     if (!canPlayMusic.value) return
     stopAll()
     backgroundMusic.game.play()
@@ -45,19 +47,19 @@ export const useSoundStore = defineStore('sound', () => {
     isGameMusicPaused.value = false
   }
 
-  const pauseGameMusic = () => {
+  const pauseGameMusic = (): void => {
     backgroundMusic.game.pause()
     isGameMusicPaused.value = true
   }
 
-  const resumeGameMusic = () => {
+  const resumeGameMusic = (): void => {
     if (isGameMusicPaused.value && canPlayMusic.value) {
       backgroundMusic.game.play()
       isGameMusicPaused.value = false
     }
   }
 
-  const stopAll = () => {
+  const stopAll = (): void => {
     backgroundMusic.main.stop()
     backgroundMusic.game.stop()
     currentTrack.value = null

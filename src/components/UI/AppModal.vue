@@ -1,21 +1,21 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
-defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true,
-  },
-})
+defineProps<{
+  modelValue: boolean
+}>()
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void
+}>()
 
-const mouseDownTarget = ref(null)
-const handleMouseDown = (event) => {
+const mouseDownTarget = ref<EventTarget | null>(null)
+
+const handleMouseDown = (event: MouseEvent): void => {
   mouseDownTarget.value = event.target
 }
 
-const closeModal = (event) => {
+const closeModal = (event: MouseEvent): void => {
   if (mouseDownTarget.value === event.currentTarget) {
     emit('update:modelValue', false)
   }

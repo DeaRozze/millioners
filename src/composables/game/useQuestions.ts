@@ -1,6 +1,5 @@
-import { ref, onMounted } from 'vue'
+import { ref, onMounted,Ref } from 'vue'
 import { useFetch } from '@vueuse/core'
-import type { Ref } from 'vue'
 
 interface Question {
   id: number

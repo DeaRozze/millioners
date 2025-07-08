@@ -1,17 +1,18 @@
 import { defineStore } from 'pinia'
 import { useSound } from '@vueuse/sound'
+import { useLocalStorage } from '@vueuse/core'
 import mainTheme from '@/assets/sounds/main-theme.mp3'
 import gameTheme from '@/assets/sounds/game-theme.mp3'
 import correctSound from '@/assets/sounds/correct-answer.mp3'
 import wrongSound from '@/assets/sounds/wrong-answer.mp3'
-import { ref,computed,watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 type SoundTrack = 'main' | 'game' | null
 
 export const useSoundStore = defineStore('sound', () => {
-  const volume = ref(0.5)
-  const soundEffectsEnabled = ref<boolean>(true)
-  const backgroundMusicEnabled = ref<boolean>(true)
+  const volume = useLocalStorage('volume', 0.5)
+  const soundEffectsEnabled = useLocalStorage('soundEffectsEnabled', true)
+  const backgroundMusicEnabled = useLocalStorage('backgroundMusicEnabled', true)
   const currentTrack = ref<SoundTrack>(null)
   const isGameMusicPaused = ref<boolean>(false)
 

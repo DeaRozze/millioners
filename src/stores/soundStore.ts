@@ -5,7 +5,7 @@ import mainTheme from '@/assets/sounds/main-theme.mp3'
 import gameTheme from '@/assets/sounds/game-theme.mp3'
 import correctSound from '@/assets/sounds/correct-answer.mp3'
 import wrongSound from '@/assets/sounds/wrong-answer.mp3'
-import { ref,watch } from 'vue'
+import { ref, watch } from 'vue'
 
 type SoundTrack = 'main' | 'game' | ''
 
@@ -27,10 +27,8 @@ export const useSoundStore = defineStore('sound', () => {
   }
 
   watch(volume, (newVolume) => {
-    Object.values(soundEffects).forEach((s) => {
-      s.sound.value.volume(newVolume)
-    })
-    Object.values(backgroundMusic).forEach((s) => {
+    const allSounds = [...Object.values(soundEffects), ...Object.values(backgroundMusic)]
+    allSounds.forEach((s) => {
       s.sound.value.volume(newVolume)
     })
   })
@@ -38,21 +36,16 @@ export const useSoundStore = defineStore('sound', () => {
   const playCorrectSound = () => soundEffectsEnabled.value && soundEffects.correct.play()
   const playWrongSound = () => soundEffectsEnabled.value && soundEffects.wrong.play()
 
-  const playMain = () => {
+  const playTrack = (track: 'main' | 'game') => {
     if (!backgroundMusicEnabled.value) return
     stopAll()
-    backgroundMusic.main.play()
-    currentTrack.value = 'main'
+    backgroundMusic[track].play()
+    currentTrack.value = track
     isGameMusicPaused.value = false
   }
 
-  const playGame = () => {
-    if (!backgroundMusicEnabled.value) return
-    stopAll()
-    backgroundMusic.game.play()
-    currentTrack.value = 'game'
-    isGameMusicPaused.value = false
-  }
+  const playMain = () => playTrack('main')
+  const playGame = () => playTrack('game')
 
   const pauseGameMusic = () => {
     backgroundMusic.game.pause()

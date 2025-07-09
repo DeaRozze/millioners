@@ -5,7 +5,7 @@ import mainTheme from '@/assets/sounds/main-theme.mp3'
 import gameTheme from '@/assets/sounds/game-theme.mp3'
 import correctSound from '@/assets/sounds/correct-answer.mp3'
 import wrongSound from '@/assets/sounds/wrong-answer.mp3'
-import { ref, computed, watch } from 'vue'
+import { ref,watch } from 'vue'
 
 type SoundTrack = 'main' | 'game' | ''
 
@@ -15,9 +15,6 @@ export const useSoundStore = defineStore('sound', () => {
   const backgroundMusicEnabled = useLocalStorage('backgroundMusicEnabled', true)
   const currentTrack = ref<SoundTrack>('')
   const isGameMusicPaused = ref<boolean>(false)
-
-  const canPlaySound = computed(() => soundEffectsEnabled.value)
-  const canPlayMusic = computed(() => backgroundMusicEnabled.value)
 
   const soundEffects = {
     correct: useSound(correctSound, { volume: volume.value, interrupt: true }),
@@ -38,11 +35,11 @@ export const useSoundStore = defineStore('sound', () => {
     })
   })
 
-  const playCorrectSound = () => canPlaySound.value && soundEffects.correct.play()
-  const playWrongSound = () => canPlaySound.value && soundEffects.wrong.play()
+  const playCorrectSound = () => soundEffectsEnabled.value && soundEffects.correct.play()
+  const playWrongSound = () => soundEffectsEnabled.value && soundEffects.wrong.play()
 
   const playMain = () => {
-    if (!canPlayMusic.value) return
+    if (!backgroundMusicEnabled.value) return
     stopAll()
     backgroundMusic.main.play()
     currentTrack.value = 'main'
@@ -50,7 +47,7 @@ export const useSoundStore = defineStore('sound', () => {
   }
 
   const playGame = () => {
-    if (!canPlayMusic.value) return
+    if (!backgroundMusicEnabled.value) return
     stopAll()
     backgroundMusic.game.play()
     currentTrack.value = 'game'
@@ -63,7 +60,7 @@ export const useSoundStore = defineStore('sound', () => {
   }
 
   const resumeGameMusic = () => {
-    if (isGameMusicPaused.value && canPlayMusic.value) {
+    if (isGameMusicPaused.value && backgroundMusicEnabled.value) {
       backgroundMusic.game.play()
       isGameMusicPaused.value = false
     }

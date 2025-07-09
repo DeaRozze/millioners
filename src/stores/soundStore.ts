@@ -7,13 +7,13 @@ import correctSound from '@/assets/sounds/correct-answer.mp3'
 import wrongSound from '@/assets/sounds/wrong-answer.mp3'
 import { ref, computed, watch } from 'vue'
 
-type SoundTrack = 'main' | 'game' | null
+type SoundTrack = 'main' | 'game' | ''
 
 export const useSoundStore = defineStore('sound', () => {
   const volume = useLocalStorage('volume', 0.5)
   const soundEffectsEnabled = useLocalStorage('soundEffectsEnabled', true)
   const backgroundMusicEnabled = useLocalStorage('backgroundMusicEnabled', true)
-  const currentTrack = ref<SoundTrack>(null)
+  const currentTrack = ref<SoundTrack>('')
   const isGameMusicPaused = ref<boolean>(false)
 
   const canPlaySound = computed(() => soundEffectsEnabled.value)
@@ -72,7 +72,7 @@ export const useSoundStore = defineStore('sound', () => {
   const stopAll = () => {
     backgroundMusic.main.stop()
     backgroundMusic.game.stop()
-    currentTrack.value = null
+    currentTrack.value = ''
     isGameMusicPaused.value = false
   }
 

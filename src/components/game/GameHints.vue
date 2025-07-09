@@ -4,6 +4,10 @@ defineProps({
     type: Object,
     required: true,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['useFiftyFifty', 'useAudienceHelp'])
@@ -15,7 +19,7 @@ const emit = defineEmits(['useFiftyFifty', 'useAudienceHelp'])
       class="game-hints__hint"
       :class="{ 'game-hints__hint--used': hints.fiftyFifty.used }"
       @click="emit('useFiftyFifty')"
-      :disabled="hints.fiftyFifty.used"
+      :disabled="hints.fiftyFifty.used || disabled"
     >
       50/50
     </button>
@@ -23,7 +27,7 @@ const emit = defineEmits(['useFiftyFifty', 'useAudienceHelp'])
       class="game-hints__hint"
       :class="{ 'game-hints__hint--used': hints.audienceHelp.used }"
       @click="emit('useAudienceHelp')"
-      :disabled="hints.audienceHelp.used"
+      :disabled="hints.audienceHelp.used || disabled"
     >
       Помощь зала
     </button>
@@ -58,10 +62,6 @@ const emit = defineEmits(['useFiftyFifty', 'useAudienceHelp'])
     &--used {
       opacity: 0.5;
       background: rgba(var(--color-primary), 0.3);
-    }
-
-    &--disabled {
-      display: none;
     }
   }
 }

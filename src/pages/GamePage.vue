@@ -95,10 +95,10 @@ onUnmounted(() => {
       <div class="game-page__content">
         <GameHints
           :hints="hints"
+          :disabled="selectedAnswerId !== null"
           @useFiftyFifty="useFiftyFifty"
           @useAudienceHelp="useAudienceHelp"
         />
-
         <h2 class="game-page__question">{{ currentQuestion.text }}</h2>
         <div class="game-page__answers">
           <div

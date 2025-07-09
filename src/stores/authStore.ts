@@ -6,7 +6,7 @@ import { useLocalStorage } from '@vueuse/core'
 interface User {
   name: string
   password: string
-  avatar: string | null
+  avatar: string | ''
 }
 
 interface AuthForm {
@@ -23,9 +23,9 @@ export const useAuthStore = defineStore('auth', () => {
     password: '',
   })
 
-  const errorMessage = ref<String>('')
-  const successMessage = ref<String>('')
-  const avatarFile = ref<string | null>(null)
+  const errorMessage = ref<string>('')
+  const successMessage = ref<string>('')
+  const avatarFile = ref<User['avatar']>('')
 
   const isAuthenticated = computed<boolean>(() => !!currentUser.value?.name)
 
@@ -34,7 +34,7 @@ export const useAuthStore = defineStore('auth', () => {
     formData.value = { name: '', password: '' }
     errorMessage.value = ''
     successMessage.value = ''
-    avatarFile.value = null
+    avatarFile.value = ''
   }
 
   const login = (name: string, password: string): boolean => {
@@ -58,7 +58,7 @@ export const useAuthStore = defineStore('auth', () => {
     return true
   }
 
-  const register = (name, password) => {
+  const register = (name: string, password: string): boolean => {
     errorMessage.value = ''
     successMessage.value = ''
 
@@ -77,7 +77,7 @@ export const useAuthStore = defineStore('auth', () => {
       return false
     }
 
-    const newUser = {
+    const newUser: User = {
       name,
       password,
       avatar: avatarFile.value,
@@ -109,7 +109,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     const reader = new FileReader()
     reader.onload = (e) => {
-      avatarFile.value = e.target.result as string
+      if (e.target?.result) {
+        avatarFile.value = e.target.result as string
+      }
     }
     reader.readAsDataURL(file)
     resetFileDialog()

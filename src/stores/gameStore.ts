@@ -3,10 +3,12 @@ import { ref, computed } from 'vue'
 import { PRIZE_STEPS } from '@/constants/game'
 import { useLocalStorage } from '@vueuse/core'
 
+type ArrayValues<T extends readonly any[]> = T[number]
+
 export const useGameStore = defineStore('game', () => {
   const selectedAnswerId = ref<number | null>(null)
   const showResult = ref<boolean>(false)
-  const prize = useLocalStorage<(typeof PRIZE_STEPS)[number]>('gameState.prize', 0)
+  const prize = useLocalStorage<ArrayValues<typeof PRIZE_STEPS>>('gameState.prize', PRIZE_STEPS[0])
   const currentQuestionIndex = useLocalStorage<number>('gameState.currentQuestionIndex', 0)
 
   const nextPrize = computed<number>(() => {
@@ -18,7 +20,7 @@ export const useGameStore = defineStore('game', () => {
   const resetGameState = (): void => {
     selectedAnswerId.value = null
     showResult.value = false
-    prize.value = 0
+    prize.value = PRIZE_STEPS[0]
     currentQuestionIndex.value = 0
   }
 

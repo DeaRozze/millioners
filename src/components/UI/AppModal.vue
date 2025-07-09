@@ -5,9 +5,7 @@ defineProps<{
   modelValue: boolean
 }>()
 
-const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-}>()
+const emit = defineEmits(['update:modelValue'])
 
 const mouseDownTarget = ref<EventTarget | null>(null)
 

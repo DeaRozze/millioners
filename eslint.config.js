@@ -23,7 +23,35 @@ export default defineConfig([
   ...pluginVue.configs['flat/essential'],
 
   {
-    files: ['**/*.ts', '**/*.tsx', '**/*.vue'],
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        project: './tsconfig.json',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+    },
+    rules: {
+      '@typescript-eslint/consistent-type-assertions': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          ignoreRestSiblings: true,
+          caughtErrors: 'none'
+        },
+      ],
+    },
+  },
+
+  {
+    files: ['**/*.vue'],
     languageOptions: {
       parser: pluginVue.parser,
       parserOptions: {
@@ -42,14 +70,14 @@ export default defineConfig([
       '@typescript-eslint/consistent-type-assertions': 'error',
       '@typescript-eslint/no-unused-vars': [
         'error',
-        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          args: 'after-used',
+          ignoreRestSiblings: true,
+          caughtErrors: 'none'
+        },
       ],
-    },
-  },
-
-  {
-    files: ['**/*.vue'],
-    rules: {
       'vue/max-attributes-per-line': [
         'error',
         {

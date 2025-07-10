@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 
-const modelValue = defineModel()
+const modelValue = defineModel<boolean>()
 </script>
 
 <template>

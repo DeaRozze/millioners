@@ -1,24 +1,20 @@
-<script setup>
+<script setup lang="ts">
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useSoundStore } from '@/stores/soundStore'
 
 const authStore = useAuthStore()
-const modelValue = defineModel()
+const modelValue = defineModel<boolean>()
 
-defineProps({
-  avatarUrl: {
-    type: String,
-    required: true,
-  },
-  username: {
-    type: String,
-    required: true,
-  },
-})
+interface Props {
+  avatarUrl: string
+  username: string
+}
 
-const onLogout = () => {
+defineProps<Props>()
+
+const onLogout = (): void => {
   const soundStore = useSoundStore()
   authStore.logout()
   soundStore.stopAll()

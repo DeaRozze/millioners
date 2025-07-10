@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import { useAuthStore } from '@/stores/authStore'
@@ -9,14 +9,14 @@ const soundStore = useSoundStore()
 const authStore = useAuthStore()
 const { setTimer } = useTimers()
 
-const modelValue = defineModel()
+const modelValue = defineModel<boolean>()
 const emit = defineEmits(['auth-success'])
 
-const closeModal = () => {
+const closeModal = (): void => {
   modelValue.value = false
 }
 
-const delayedAuthSuccessAction = () => {
+const delayedAuthSuccessAction = (): void => {
   setTimer(() => {
     closeModal()
     emit('auth-success')
@@ -24,7 +24,7 @@ const delayedAuthSuccessAction = () => {
   }, 1500)
 }
 
-const submitAuthForm = () => {
+const submitAuthForm = (): void => {
   const { name, password } = authStore.formData
 
   if (authStore.isLoginMode) {
@@ -38,13 +38,13 @@ const submitAuthForm = () => {
   }
 }
 
-const triggerFileInput = () => {
+const triggerFileInput = (): void => {
   authStore.openFileDialog()
 }
 
-const signalAvatarError = () => {
+const signalAvatarError = (): void => {
   authStore.errorMessage = 'Не удалось загрузить изображение'
-  authStore.avatarFile = null
+  authStore.avatarFile = ''
 }
 </script>
 

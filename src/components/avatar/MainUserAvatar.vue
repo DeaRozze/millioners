@@ -1,18 +1,20 @@
 <script setup>
+import { storeToRefs } from 'pinia'
 import { useAuthStore } from '@/stores/authStore'
 import ProfileModal from '@/components/auth/ProfileModal.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
 import { computed, ref } from 'vue'
 
 const authStore = useAuthStore()
+const { currentUser } = storeToRefs(authStore)
 const isProfileModalOpen = ref(false)
 const isAuthModalOpen = ref(false)
 
-const avatarUrl = computed(() => authStore.currentUser?.avatar || '/default-avatar.png')
-const username = computed(() => authStore.currentUser?.name || 'Гость')
+const avatarUrl = computed(() => currentUser.value?.avatar || '/default-avatar.png')
+const username = computed(() => currentUser.value?.name || 'Гость')
 
 const handleAvatarClick = () => {
-  if (authStore.currentUser?.name) {
+  if (currentUser.value?.name) {
     isProfileModalOpen.value = true
   } else {
     isAuthModalOpen.value = true
@@ -42,7 +44,7 @@ const handleAvatarClick = () => {
 
     <AuthModal
       v-model="isAuthModalOpen"
-      v-if="!authStore.currentUser?.name"
+      v-if="!currentUser?.name"
     />
   </div>
 </template>

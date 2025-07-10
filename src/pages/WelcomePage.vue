@@ -3,7 +3,7 @@ import { ref, watch, onUnmounted } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
-import MainUserAvatar from '@/components/UI/MainUserAvatar.vue'
+import MainUserAvatar from '@/components/avatar/MainUserAvatar.vue'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useSoundStore } from '@/stores/soundStore'
 

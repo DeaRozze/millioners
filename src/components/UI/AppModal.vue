@@ -1,19 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { onClickOutside } from '@vueuse/core'
 
 const modelValue = defineModel<boolean>()
 
-const mouseDownTarget = ref<EventTarget | null>(null)
+const modalContentRef = ref<HTMLElement | null>(null)
 
-const handleMouseDown = (event: MouseEvent): void => {
-  mouseDownTarget.value = event.target
-}
-
-const closeModal = (event: MouseEvent): void => {
-  if (mouseDownTarget.value === event.currentTarget) {
-    modelValue.value = false
-  }
-}
+onClickOutside(modalContentRef, () => {
+  modelValue.value = false
+})
 </script>
 
 <template>
@@ -21,13 +16,14 @@ const closeModal = (event: MouseEvent): void => {
     <div
       v-if="modelValue"
       class="modal-overlay"
-      @click.self="closeModal"
-      @mousedown="handleMouseDown"
     >
-      <div class="modal-content">
+      <div
+        class="modal-content"
+        ref="modalContentRef"
+      >
         <button
           class="modal-close"
-          @click="closeModal"
+          @click="modelValue = false"
         >
           ×
         </button>

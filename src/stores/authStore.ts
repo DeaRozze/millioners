@@ -29,7 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed<boolean>(() => !!currentUser.value?.name)
 
-  const toggleMode = (): void => {
+  const resetAuthForm = (): void => {
     isLoginMode.value = !isLoginMode.value
     formData.value = { name: '', password: '' }
     errorMessage.value = ''
@@ -132,6 +132,6 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     openFileDialog,
-    toggleMode,
+    resetAuthForm,
   }
 })

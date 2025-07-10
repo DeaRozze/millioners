@@ -5,12 +5,9 @@ import { useAuthStore } from '@/stores/authStore'
 import { useSoundStore } from '@/stores/soundStore'
 
 const authStore = useAuthStore()
+const modelValue = defineModel()
 
 defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true,
-  },
   avatarUrl: {
     type: String,
     required: true,
@@ -21,21 +18,16 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['update:modelValue'])
-
 const handleLogout = () => {
   const soundStore = useSoundStore()
   authStore.logout()
   soundStore.stopAll()
-  emit('update:modelValue', false)
+  modelValue.value = false
 }
 </script>
 
 <template>
-  <AppModal
-    :modelValue="modelValue"
-    @update:modelValue="emit('update:modelValue', $event)"
-  >
+  <AppModal v-model="modelValue">
     <div class="profile-modal">
       <div class="profile-modal__avatar-wrapper">
         <img

@@ -11,19 +11,13 @@ const authStore = useAuthStore()
 
 const { errorMessage, successMessage, avatarFile, isLoginMode, formData } = storeToRefs(authStore)
 
-defineProps({
-  modelValue: {
-    type: Boolean,
-    required: true,
-  },
-})
-
-const emit = defineEmits(['update:modelValue', 'auth-success'])
+const modelValue = defineModel()
+const emit = defineEmits(['auth-success'])
 
 const { setTimer } = useTimers()
 
 const closeModal = () => {
-  emit('update:modelValue', false)
+  modelValue.value = false
 }
 
 const handleAuthSuccess = () => {
@@ -59,10 +53,7 @@ const signalAvatarError = () => {
 </script>
 
 <template>
-  <AppModal
-    :modelValue="modelValue"
-    @update:modelValue="emit('update:modelValue', $event)"
-  >
+  <AppModal v-model="modelValue">
     <h2 class="auth-modal__title">{{ isLoginMode ? 'Вход' : 'Регистрация' }}</h2>
     <div
       v-if="successMessage"
@@ -156,7 +147,7 @@ const signalAvatarError = () => {
         <button
           type="button"
           class="auth-modal__toggle-mode"
-          @click="authStore.toggleMode"
+          @click="authStore.resetAuthForm"
         >
           {{ isLoginMode ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти' }}
         </button>

@@ -72,7 +72,7 @@ export function useQuestions(): UseQuestionsReturn {
       if (questions.value.length === 0) {
         error.value = 'Вопросы не загружены. Попробуйте позже'
       }
-    } catch (err) {
+    } catch{
       error.value = 'Ошибка загрузки'
     } finally {
       isLoading.value = false

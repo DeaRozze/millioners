@@ -16,7 +16,7 @@ const closeModal = () => {
   modelValue.value = false
 }
 
-const handleAuthSuccess = () => {
+const delayedAuthSuccessAction = () => {
   setTimer(() => {
     closeModal()
     emit('auth-success')
@@ -24,16 +24,16 @@ const handleAuthSuccess = () => {
   }, 1500)
 }
 
-const handleSubmit = () => {
+const submitAuthForm = () => {
   const { name, password } = authStore.formData
 
   if (authStore.isLoginMode) {
     if (authStore.login(name, password)) {
-      handleAuthSuccess()
+      delayedAuthSuccessAction()
     }
   } else {
     if (authStore.register(name, password)) {
-      handleAuthSuccess()
+      delayedAuthSuccessAction()
     }
   }
 }
@@ -61,7 +61,7 @@ const signalAvatarError = () => {
 
     <form
       class="auth-modal__form"
-      @submit.prevent="handleSubmit"
+      @submit.prevent="submitAuthForm"
     >
       <div class="auth-modal__form-group">
         <label

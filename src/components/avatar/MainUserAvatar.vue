@@ -11,7 +11,7 @@ const isAuthModalOpen = ref(false)
 const avatarUrl = computed(() => authStore.currentUser?.avatar || '/default-avatar.png')
 const username = computed(() => authStore.currentUser?.name || 'Гость')
 
-const handleAvatarClick = () => {
+const showAuthOrProfileModal = () => {
   if (authStore.currentUser?.name) {
     isProfileModalOpen.value = true
   } else {
@@ -24,7 +24,7 @@ const handleAvatarClick = () => {
   <div class="user-avatar">
     <div
       class="user-avatar__clickable"
-      @click.stop="handleAvatarClick"
+      @click.stop="showAuthOrProfileModal"
     >
       <img
         :src="avatarUrl"

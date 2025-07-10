@@ -18,7 +18,7 @@ defineProps({
   },
 })
 
-const handleLogout = () => {
+const onLogout = () => {
   const soundStore = useSoundStore()
   authStore.logout()
   soundStore.stopAll()
@@ -39,7 +39,7 @@ const handleLogout = () => {
       <h2 class="profile-modal__name">{{ username }}</h2>
       <AppButton
         class="profile-modal__logout"
-        @click="handleLogout"
+        @click="onLogout"
       >
         Выйти
       </AppButton>

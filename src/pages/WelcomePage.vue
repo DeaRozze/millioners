@@ -24,11 +24,11 @@ watch(backgroundMusicEnabled, (enabled) => {
   if (!enabled) soundStore.stopAll()
 })
 
-const handleVolumeChange = (event) => {
+const updateVolume = (event) => {
   soundStore.volume = parseFloat(event.target.value)
 }
 
-const handleAuthSuccess = () => {
+const playMainSoundOnAuth = () => {
   soundStore.playMain()
 }
 
@@ -101,7 +101,7 @@ onUnmounted(() => {
             max="1"
             step="0.01"
             :value="soundStore.volume"
-            @input="handleVolumeChange"
+            @input="updateVolume"
             class="volume-slider"
           />
           <span class="volume-value">{{ Math.round(soundStore.volume * 100) }}%</span>
@@ -111,7 +111,7 @@ onUnmounted(() => {
 
     <AuthModal
       v-model="isAuthModalOpen"
-      @auth-success="handleAuthSuccess"
+      @auth-success="playMainSoundOnAuth"
     />
   </div>
 </template>

@@ -1,9 +1,10 @@
-<script setup>
-defineProps({
-  primary: {
-    type: Boolean,
-    default: true,
-  },
+<script setup lang="ts">
+interface Props {
+  primary?: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  primary: true,
 })
 
 defineEmits(['click'])
@@ -12,7 +13,7 @@ defineEmits(['click'])
 <template>
   <button
     class="app-button"
-    :class="{ 'app-button--primary': primary }"
+    :class="{ 'app-button--primary': props.primary }"
     @click="$emit('click')"
   >
     <slot></slot>

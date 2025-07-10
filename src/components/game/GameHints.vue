@@ -1,21 +1,22 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
-defineProps({
+interface Hint {
+  used: boolean
+}
+interface Props {
   hints: {
-    type: Object,
-    required: true,
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-})
+    fiftyFifty: Hint
+    audienceHelp: Hint
+  }
+  disabled?: boolean
+}
+const props = defineProps<Props>()
 
 const emit = defineEmits(['useFiftyFifty', 'useAudienceHelp'])
 
-const fiftyFiftyTooltip = ref(false)
-const audienceHelpTooltip = ref(false)
+const fiftyFiftyTooltip = ref<boolean>(false)
+const audienceHelpTooltip = ref<boolean>(false)
 </script>
 
 <template>
@@ -23,16 +24,16 @@ const audienceHelpTooltip = ref(false)
     <div class="game-hints__hint-wrapper">
       <button
         class="game-hints__hint"
-        :class="{ 'game-hints__hint--used': hints.fiftyFifty.used }"
+        :class="{ 'game-hints__hint--used': props.hints.fiftyFifty.used }"
         @click="emit('useFiftyFifty')"
-        @mouseenter="hints.fiftyFifty.used ? (fiftyFiftyTooltip = true) : null"
+        @mouseenter="props.hints.fiftyFifty.used ? (fiftyFiftyTooltip = true) : null"
         @mouseleave="fiftyFiftyTooltip = false"
-        :disabled="hints.fiftyFifty.used || disabled"
+        :disabled="props.hints.fiftyFifty.used || props.disabled"
       >
         50/50
       </button>
       <div
-        v-if="hints.fiftyFifty.used && fiftyFiftyTooltip"
+        v-if="props.hints.fiftyFifty.used && fiftyFiftyTooltip"
         class="game-hints__tooltip"
       >
         Вы уже использовали эту подсказку
@@ -42,16 +43,16 @@ const audienceHelpTooltip = ref(false)
     <div class="game-hints__hint-wrapper">
       <button
         class="game-hints__hint"
-        :class="{ 'game-hints__hint--used': hints.audienceHelp.used }"
+        :class="{ 'game-hints__hint--used': props.hints.audienceHelp.used }"
         @click="emit('useAudienceHelp')"
-        @mouseenter="hints.audienceHelp.used ? (audienceHelpTooltip = true) : null"
+        @mouseenter="props.hints.audienceHelp.used ? (audienceHelpTooltip = true) : null"
         @mouseleave="audienceHelpTooltip = false"
-        :disabled="hints.audienceHelp.used || disabled"
+        :disabled="props.hints.audienceHelp.used || props.disabled"
       >
         Помощь зала
       </button>
       <div
-        v-if="hints.audienceHelp.used && audienceHelpTooltip"
+        v-if="props.hints.audienceHelp.used && audienceHelpTooltip"
         class="game-hints__tooltip"
       >
         Вы уже использовали эту подсказку

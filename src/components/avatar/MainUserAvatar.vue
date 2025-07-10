@@ -1,17 +1,17 @@
-<script setup>
+<script setup lang="ts">
 import { useAuthStore } from '@/stores/authStore'
 import ProfileModal from '@/components/auth/ProfileModal.vue'
 import AuthModal from '@/components/auth/AuthModal.vue'
 import { computed, ref } from 'vue'
 
 const authStore = useAuthStore()
-const isProfileModalOpen = ref(false)
-const isAuthModalOpen = ref(false)
+const isProfileModalOpen = ref<boolean>(false)
+const isAuthModalOpen = ref<boolean>(false)
 
-const avatarUrl = computed(() => authStore.currentUser?.avatar || '/default-avatar.png')
-const username = computed(() => authStore.currentUser?.name || 'Гость')
+const avatarUrl = computed<string>(() => authStore.currentUser?.avatar || '/default-avatar.png')
+const username = computed<string>(() => authStore.currentUser?.name || 'Гость')
 
-const showAuthOrProfileModal = () => {
+function showAuthOrProfileModal(): void {
   if (authStore.currentUser?.name) {
     isProfileModalOpen.value = true
   } else {

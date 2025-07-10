@@ -2,19 +2,15 @@
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import { useAuthStore } from '@/stores/authStore'
-import { storeToRefs } from 'pinia'
 import { useTimers } from '@/composables/utils/useTimers'
 import { useSoundStore } from '@/stores/soundStore'
 
 const soundStore = useSoundStore()
 const authStore = useAuthStore()
-
-const { errorMessage, successMessage, avatarFile, isLoginMode, formData } = storeToRefs(authStore)
+const { setTimer } = useTimers()
 
 const modelValue = defineModel()
 const emit = defineEmits(['auth-success'])
-
-const { setTimer } = useTimers()
 
 const closeModal = () => {
   modelValue.value = false
@@ -29,9 +25,9 @@ const handleAuthSuccess = () => {
 }
 
 const handleSubmit = () => {
-  const { name, password } = formData.value
+  const { name, password } = authStore.formData
 
-  if (isLoginMode.value) {
+  if (authStore.isLoginMode) {
     if (authStore.login(name, password)) {
       handleAuthSuccess()
     }
@@ -54,13 +50,15 @@ const signalAvatarError = () => {
 
 <template>
   <AppModal v-model="modelValue">
-    <h2 class="auth-modal__title">{{ isLoginMode ? 'Вход' : 'Регистрация' }}</h2>
+    <h2 class="auth-modal__title">{{ authStore.isLoginMode ? 'Вход' : 'Регистрация' }}</h2>
+
     <div
-      v-if="successMessage"
+      v-if="authStore.successMessage"
       class="auth-modal__success"
     >
-      {{ successMessage }}
+      {{ authStore.successMessage }}
     </div>
+
     <form
       class="auth-modal__form"
       @submit.prevent="handleSubmit"
@@ -73,7 +71,7 @@ const signalAvatarError = () => {
         >
         <input
           id="auth-name"
-          v-model="formData.name"
+          v-model="authStore.formData.name"
           type="text"
           class="auth-modal__input"
           required
@@ -88,7 +86,7 @@ const signalAvatarError = () => {
         >
         <input
           id="auth-password"
-          v-model="formData.password"
+          v-model="authStore.formData.password"
           type="password"
           class="auth-modal__input"
           required
@@ -96,7 +94,7 @@ const signalAvatarError = () => {
       </div>
 
       <div
-        v-if="!isLoginMode"
+        v-if="!authStore.isLoginMode"
         class="auth-modal__form-group avatar-upload-group"
       >
         <label class="auth-modal__label">Аватар:</label>
@@ -106,7 +104,7 @@ const signalAvatarError = () => {
             @click="triggerFileInput"
           >
             <div
-              v-if="!avatarFile"
+              v-if="!authStore.avatarFile"
               class="avatar-placeholder"
             >
               <span class="placeholder-icon">👤</span>
@@ -114,7 +112,7 @@ const signalAvatarError = () => {
             </div>
             <img
               v-else
-              :src="avatarFile"
+              :src="authStore.avatarFile"
               alt="Превью аватара"
               class="avatar-preview"
               @error="signalAvatarError"
@@ -131,10 +129,10 @@ const signalAvatarError = () => {
       </div>
 
       <div
-        v-if="errorMessage"
+        v-if="authStore.errorMessage"
         class="auth-modal__error"
       >
-        {{ errorMessage }}
+        {{ authStore.errorMessage }}
       </div>
 
       <div class="auth-modal__buttons">
@@ -142,14 +140,16 @@ const signalAvatarError = () => {
           type="submit"
           class="auth-modal__submit"
         >
-          {{ isLoginMode ? 'Войти' : 'Зарегистрироваться' }}
+          {{ authStore.isLoginMode ? 'Войти' : 'Зарегистрироваться' }}
         </AppButton>
         <button
           type="button"
           class="auth-modal__toggle-mode"
           @click="authStore.resetAuthForm"
         >
-          {{ isLoginMode ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти' }}
+          {{
+            authStore.isLoginMode ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти'
+          }}
         </button>
       </div>
     </form>

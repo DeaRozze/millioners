@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onUnmounted } from 'vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
@@ -8,27 +8,28 @@ import { ROUTE_PATHS } from '@/constants/routes'
 import { useSoundStore } from '@/stores/soundStore'
 
 const soundStore = useSoundStore()
-const isRulesModalOpen = ref(false)
-const isSettingsModalOpen = ref(false)
-const isAuthModalOpen = ref(false)
+const isRulesModalOpen = ref<boolean>(false)
+const isSettingsModalOpen = ref<boolean>(false)
+const isAuthModalOpen = ref<boolean>(false)
 
-const soundEffectsEnabled = ref(soundStore.soundEffectsEnabled)
-const backgroundMusicEnabled = ref(soundStore.backgroundMusicEnabled)
+const soundEffectsEnabled = ref<boolean>(soundStore.soundEffectsEnabled)
+const backgroundMusicEnabled = ref<boolean>(soundStore.backgroundMusicEnabled)
 
-watch(soundEffectsEnabled, (enabled) => {
+watch(soundEffectsEnabled, (enabled: boolean) => {
   soundStore.soundEffectsEnabled = enabled
 })
 
-watch(backgroundMusicEnabled, (enabled) => {
+watch(backgroundMusicEnabled, (enabled: boolean) => {
   soundStore.backgroundMusicEnabled = enabled
   if (!enabled) soundStore.stopAll()
 })
 
-const updateVolume = (event) => {
-  soundStore.volume = parseFloat(event.target.value)
+const updateVolume = (event: Event): void => {
+  const target = event.target as HTMLInputElement
+  soundStore.volume = parseFloat(target.value)
 }
 
-const playMainSoundOnAuth = () => {
+const playMainSoundOnAuth = (): void => {
   soundStore.playMain()
 }
 

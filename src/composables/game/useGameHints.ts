@@ -1,11 +1,6 @@
 import { useLocalStorage } from '@vueuse/core'
 import { ref, Ref } from 'vue'
-
-interface Answer {
-  id: number
-  text: string
-  isCorrect: boolean
-}
+import type {Answer } from '@/types/game'
 
 interface Hint {
   used: boolean

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import GameHints from '@/components/game/GameHints.vue'
@@ -6,19 +6,48 @@ import { computed, onMounted, onUnmounted } from 'vue'
 import { useAnswerLogic } from '@/composables/game/useAnswerLogic'
 import { useQuestions } from '@/composables/game/useQuestions'
 import { useGameStore } from '@/stores/gameStore'
-import { storeToRefs } from 'pinia'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useGameHints } from '@/composables/game/useGameHints'
 import { useSoundStore } from '@/stores/soundStore'
+import type {Question as QuizQuestion } from '@/types/game'
 
 const soundStore = useSoundStore()
-
 const gameStore = useGameStore()
-const { selectedAnswerId, showResult, prize, currentQuestionIndex, nextPrize } =
-  storeToRefs(gameStore)
-const { questions, isLoading, error, loadQuestions } = useQuestions()
 
-const currentQuestion = computed(() => questions.value?.[currentQuestionIndex.value] || null)
+const selectedAnswerId = computed({
+  get: () => gameStore.selectedAnswerId,
+  set: (value) => {
+    gameStore.selectedAnswerId = value
+  },
+})
+
+const showResult = computed({
+  get: () => gameStore.showResult,
+  set: (value) => {
+    gameStore.showResult = value
+  },
+})
+
+const prize = computed({
+  get: () => gameStore.prize,
+  set: (value) => {
+    gameStore.prize = value
+  },
+})
+
+const currentQuestionIndex = computed({
+  get: () => gameStore.currentQuestionIndex,
+  set: (value) => {
+    gameStore.currentQuestionIndex = value
+  },
+})
+
+const nextPrize = computed(() => gameStore.nextPrize)
+
+const { questions, isLoading, error, loadQuestions } = useQuestions()
+const currentQuestion = computed<QuizQuestion | null>(
+  () => questions.value?.[currentQuestionIndex.value] || null,
+)
 
 const { hints, hiddenAnswers, audiencePercentages, useFiftyFifty, useAudienceHelp, resetHints } =
   useGameHints(computed(() => currentQuestion.value?.answers || []))
@@ -32,11 +61,11 @@ const { getAnswerClass, selectAnswer, showResultModal } = useAnswerLogic({
   hiddenAnswers,
 })
 
-const getAnswerPercentage = (answerId) => {
+const getAnswerPercentage = (answerId: number): number | null => {
   return audiencePercentages.value[answerId] || null
 }
 
-const checkCurrentQuestion = () => {
+const checkCurrentQuestion = (): void => {
   const gameFinished = currentQuestionIndex.value >= questions.value.length - 1
   if (gameFinished) {
     gameStore.resetGameState()
@@ -49,14 +78,15 @@ const checkCurrentQuestion = () => {
   audiencePercentages.value = {}
 }
 
-const playAgain = () => {
+const playAgain = (): void => {
   gameStore.resetGameState()
   resetHints()
   showResultModal.value = false
   soundStore.playGame()
   loadQuestions()
 }
-const resetToHomeState = () => {
+
+const resetToHomeState = (): void => {
   soundStore.stopAll()
   gameStore.resetGameState()
   resetHints()
@@ -70,6 +100,7 @@ onUnmounted(() => {
   soundStore.stopAll()
 })
 </script>
+
 <template>
   <div class="game-page">
     <div class="game-page__header">
@@ -105,7 +136,7 @@ onUnmounted(() => {
             v-for="{ id, text, isCorrect } in currentQuestion.answers"
             :key="id"
             @click="selectAnswer(id)"
-            :class="['answer', getAnswerClass({ id, isCorrect })]"
+            :class="['answer', getAnswerClass({ id, text, isCorrect })]"
           >
             {{ text }}
             <span

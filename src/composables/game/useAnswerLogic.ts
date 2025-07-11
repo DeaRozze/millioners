@@ -1,17 +1,7 @@
 import { PRIZE_STEPS } from '@/constants/game'
 import { ref, Ref } from 'vue'
 import { useSoundStore } from '@/stores/soundStore'
-
-interface Answer {
-  id: number
-  text: string
-  isCorrect: boolean
-}
-
-interface Question {
-  question: string
-  answers: Answer[]
-}
+import type { Question, Answer } from '@/types/game'
 
 interface UseAnswerLogicProps {
   questions: Ref<Question[]>

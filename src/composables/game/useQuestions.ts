@@ -1,17 +1,6 @@
 import { ref, onMounted,Ref } from 'vue'
 import { useFetch } from '@vueuse/core'
-
-interface Question {
-  id: number
-  text: string
-  answers: Answer[]
-}
-
-interface Answer {
-  id: number
-  text: string
-  isCorrect: boolean
-}
+import type { Question, Answer } from '@/types/game'
 
 interface UseQuestionsReturn {
   questions: Ref<Question[]>
@@ -26,10 +15,12 @@ export function useQuestions(): UseQuestionsReturn {
   const error = ref<string | null>(null)
 
   const shuffleAnswers = (answers: Omit<Answer, 'id'>[]): Answer[] => {
-    return [...answers].map((answer, index) => ({
-      ...answer,
-      id: index + 1,
-    })).sort(() => Math.random() - 0.5)
+    return [...answers]
+      .map((answer, index) => ({
+        ...answer,
+        id: index + 1,
+      }))
+      .sort(() => Math.random() - 0.5)
   }
 
   const decodeHtml = (text: string): string => {
@@ -72,7 +63,7 @@ export function useQuestions(): UseQuestionsReturn {
       if (questions.value.length === 0) {
         error.value = 'Вопросы не загружены. Попробуйте позже'
       }
-    } catch{
+    } catch {
       error.value = 'Ошибка загрузки'
     } finally {
       isLoading.value = false

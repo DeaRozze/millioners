@@ -9,7 +9,8 @@ import { useGameStore } from '@/stores/gameStore'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useGameHints } from '@/composables/game/useGameHints'
 import { useSoundStore } from '@/stores/soundStore'
-import type {Question as QuizQuestion } from '@/types/game'
+import type { Question as QuizQuestion } from '@/types/game'
+import PrizePyramid from '@/components/game/PrizePyramid.vue'
 
 const soundStore = useSoundStore()
 const gameStore = useGameStore()
@@ -123,38 +124,43 @@ onUnmounted(() => {
     </div>
     <div v-else-if="!currentQuestion">Нет данных для отображения</div>
     <div v-else>
-      <div class="game-page__content">
-        <GameHints
-          :hints="hints"
-          :disabled="selectedAnswerId !== null"
-          @useFiftyFifty="useFiftyFifty"
-          @useAudienceHelp="useAudienceHelp"
-        />
-        <h2 class="game-page__question">{{ currentQuestion.text }}</h2>
-        <div class="game-page__answers">
-          <div
-            v-for="{ id, text, isCorrect } in currentQuestion.answers"
-            :key="id"
-            @click="selectAnswer(id)"
-            :class="['answer', getAnswerClass({ id, text, isCorrect })]"
-          >
-            {{ text }}
-            <span
-              v-if="getAnswerPercentage(id)"
-              class="answer__percentage"
+      <div class="game-page__layout">
+        <div class="game-page__content">
+          <GameHints
+            :hints="hints"
+            :disabled="selectedAnswerId !== null"
+            @useFiftyFifty="useFiftyFifty"
+            @useAudienceHelp="useAudienceHelp"
+          />
+          <h2 class="game-page__question">{{ currentQuestion.text }}</h2>
+          <div class="game-page__answers">
+            <div
+              v-for="{ id, text, isCorrect } in currentQuestion.answers"
+              :key="id"
+              @click="selectAnswer(id)"
+              :class="['answer', getAnswerClass({ id, text, isCorrect })]"
             >
-              {{ getAnswerPercentage(id) }}%
-            </span>
+              {{ text }}
+              <span
+                v-if="getAnswerPercentage(id)"
+                class="answer__percentage"
+              >
+                {{ getAnswerPercentage(id) }}%
+              </span>
+            </div>
           </div>
-        </div>
 
-        <AppButton
-          v-if="showResult"
-          @click="checkCurrentQuestion"
-          class="game-page__next-button"
-        >
-          {{ currentQuestionIndex < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру' }}
-        </AppButton>
+          <AppButton
+            v-if="showResult"
+            @click="checkCurrentQuestion"
+            class="game-page__next-button"
+          >
+            {{
+              currentQuestionIndex < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру'
+            }}
+          </AppButton>
+        </div>
+        <PrizePyramid :current-prize="prize" />
       </div>
     </div>
 
@@ -178,6 +184,12 @@ onUnmounted(() => {
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+
+  &__layout {
+    display: flex;
+    gap: var(--spacing-xl);
+    flex-grow: 1;
+  }
 
   &__header {
     display: flex;

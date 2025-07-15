@@ -1,6 +1,6 @@
-import { ref, onMounted,Ref } from 'vue'
-import { useFetch } from '@vueuse/core'
-import type { Question, Answer } from '@/types/game'
+import { ref, onMounted, Ref } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
+import type { Question } from '@/types/game'
 
 interface UseQuestionsReturn {
   questions: Ref<Question[]>
@@ -10,67 +10,52 @@ interface UseQuestionsReturn {
 }
 
 export function useQuestions(): UseQuestionsReturn {
-  const questions = ref<Question[]>([])
+  const questions = useLocalStorage<Question[]>('game-questions', [])
   const isLoading = ref<boolean>(true)
   const error = ref<string | null>(null)
 
-  const shuffleAnswers = (answers: Omit<Answer, 'id'>[]): Answer[] => {
-    return [...answers]
-      .map((answer, index) => ({
-        ...answer,
-        id: index + 1,
-      }))
-      .sort(() => Math.random() - 0.5)
-  }
-
-  const decodeHtml = (text: string): string => {
-    const textArea = document.createElement('textarea')
-    textArea.innerHTML = text
-    return textArea.textContent || ''
-  }
-
-  const fetchQuestions = async (amount = 10): Promise<Question[]> => {
-    const { data, error: fetchError } = await useFetch(
-      `https://opentdb.com/api.php?amount=${amount}&type=multiple`,
-      {
-        afterFetch(ctx) {
-          ctx.data =
-            ctx.data.results?.map((question: any, index: number) => ({
-              id: index + 1,
-              text: decodeHtml(question.question),
-              answers: shuffleAnswers([
-                { text: decodeHtml(question.correct_answer), isCorrect: true },
-                ...question.incorrect_answers.map((ans: string) => ({
-                  text: decodeHtml(ans),
-                  isCorrect: false,
-                })),
-              ]),
-            })) || []
-          return ctx
-        },
-      },
-    ).json()
-
-    if (fetchError.value) throw new Error(fetchError.value)
-    return data.value
-  }
-
-  const loadQuestions = async (): Promise<void> => {
+  const loadQuestions = async (retryCount = 3): Promise<void> => {
     isLoading.value = true
     error.value = null
     try {
-      questions.value = await fetchQuestions()
-      if (questions.value.length === 0) {
-        error.value = 'Вопросы не загружены. Попробуйте позже'
+      const response = await fetch('http://localhost:3000/api/questions')
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
       }
-    } catch {
-      error.value = 'Ошибка загрузки'
+
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      if (!data.questions || data.questions.length === 0) {
+        throw new Error('No questions received from server')
+      }
+
+      questions.value = data.questions
+      error.value = null
+    } catch (err) {
+      if (retryCount > 0) {
+        await new Promise((resolve) => setTimeout(resolve, 1000))
+        return loadQuestions(retryCount - 1)
+      }
+      error.value = err instanceof Error ? err.message : 'Failed to load questions'
+      console.error('Error loading questions:', err)
+      questions.value = []
     } finally {
       isLoading.value = false
     }
   }
 
-  onMounted(loadQuestions)
+  onMounted(() => {
+    if (questions.value.length === 0) {
+      loadQuestions()
+    } else {
+      isLoading.value = false
+    }
+  })
 
   return {
     questions,

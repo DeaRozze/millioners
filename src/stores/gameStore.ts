@@ -29,9 +29,7 @@ export const useGameStore = defineStore('game', () => {
     showResult,
     prize,
     currentQuestionIndex,
-
     nextPrize,
-
     resetGameState,
   }
 })

@@ -72,6 +72,7 @@ const checkCurrentQuestion = (): void => {
     gameStore.resetGameState()
     return
   }
+  currentQuestionIndex.value++
   soundStore.resumeGameMusic()
   selectedAnswerId.value = null
   showResult.value = false
@@ -91,6 +92,7 @@ const resetToHomeState = (): void => {
   soundStore.stopAll()
   gameStore.resetGameState()
   resetHints()
+  questions.value = []
 }
 
 onMounted(() => {
@@ -122,7 +124,7 @@ onUnmounted(() => {
       {{ error }}
       <AppButton @click="loadQuestions">Повторить попытку</AppButton>
     </div>
-    <div v-else-if="!currentQuestion">Нет данных для отображения</div>
+    <div v-else-if="!currentQuestion">Подождите...</div>
     <div v-else>
       <div class="game-page__layout">
         <div class="game-page__content">
@@ -236,11 +238,6 @@ onUnmounted(() => {
     grid-template-columns: 1fr 1fr;
     gap: var(--spacing-md);
     margin-bottom: var(--spacing-xl);
-  }
-
-  .game-page__next-button {
-    margin-top: var(--spacing-lg);
-    animation: fadeInUp 0.5s ease-out;
   }
 }
 

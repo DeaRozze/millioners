@@ -28,7 +28,7 @@ const pyramidSteps = computed(() => {
           'pyramid-step--current': isCurrent,
         }"
       >
-        <span class="pyramid-step__prize">{{ prize.toLocaleString() }} ₽</span>
+        <span class="pyramid-step__prize">{{ prize }} ₽</span>
       </div>
     </transition-group>
   </div>

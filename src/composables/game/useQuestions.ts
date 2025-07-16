@@ -18,7 +18,7 @@ export function useQuestions(): UseQuestionsReturn {
     isLoading.value = true
     error.value = null
     try {
-      const response = await fetch('http://localhost:3000/api/questions')
+      const response = await fetch('https://milloines-back.onrender.com/api/questions')
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)

@@ -1,15 +1,7 @@
 import { useLocalStorage } from '@vueuse/core'
 import { ref, Ref } from 'vue'
-import type {Answer } from '@/types/game'
-
-interface Hint {
-  used: boolean
-}
-
-interface Hints {
-  fiftyFifty: Hint
-  audienceHelp: Hint
-}
+import type { Answer } from '@/types/game'
+import type { Hints } from '@/types/gameHints'
 
 interface GameHintsReturn {
   hints: Ref<Hints>

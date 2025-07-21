@@ -10,7 +10,7 @@ export function useTimers(): UseTimersReturn {
 
   const setTimer = (callback: () => void, delay: number): void => {
     clearTimer()
-    timer.value = window.setTimeout(() => {
+    timer.value = globalThis.setTimeout(() => {
       callback()
       timer.value = null
     }, delay)

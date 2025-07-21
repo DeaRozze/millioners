@@ -2,7 +2,7 @@
 import AppModal from '@/components/UI/AppModal.vue'
 import AppButton from '@/components/UI/AppButton.vue'
 import { useAuthStore } from '@/stores/authStore'
-import { useTimers } from '@/composables/utils/useTimers'
+import { useTimers } from '@/composables/timers/useTimers'
 import { useSoundStore } from '@/stores/soundStore'
 
 const soundStore = useSoundStore()

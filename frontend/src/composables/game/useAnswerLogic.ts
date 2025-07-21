@@ -11,8 +11,15 @@ interface UseAnswerLogicProps {
   currentQuestionIndex: Ref<number>
   hiddenAnswers?: Ref<number[]>
 }
+interface UseAnswerLogicReturn {
+  getAnswerClass: (answer: Answer) => string
+  selectAnswer: (answerId: number) => Promise<void>
+  canGonextQuestion: () => boolean
+  isProcessing: Ref<boolean>
+  showResultModal: Ref<boolean>
+}
 
-export function useAnswerLogic(props: UseAnswerLogicProps) {
+export function useAnswerLogic(props: UseAnswerLogicProps): UseAnswerLogicReturn {
   const isProcessing = ref(false)
   const showResultModal = ref(false)
   const soundStore = useSoundStore()

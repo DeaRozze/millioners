@@ -1,16 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-interface Hint {
-  used: boolean
-}
-interface Props {
-  hints: {
-    fiftyFifty: Hint
-    audienceHelp: Hint
-  }
-  disabled?: boolean
-}
+import type { Props } from '@/types/gameHints'
 const props = defineProps<Props>()
 
 const emit = defineEmits<{

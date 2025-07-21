@@ -50,7 +50,7 @@ const currentQuestion = computed<QuizQuestion | null>(
   () => questions.value?.[currentQuestionIndex.value] || null,
 )
 
-const { hints, hiddenAnswers, audiencePercentages, useFiftyFifty, useAudienceHelp, resetHints } =
+const { hints, hiddenAnswers, audiencePercentages, callFiftyFifty, useAudienceHelp, resetHints } =
   useGameHints(computed(() => currentQuestion.value?.answers || []))
 
 const { getAnswerClass, selectAnswer, showResultModal } = useAnswerLogic({
@@ -131,7 +131,7 @@ onUnmounted(() => {
           <GameHints
             :hints="hints"
             :disabled="selectedAnswerId !== null"
-            @useFiftyFifty="useFiftyFifty"
+            @callFiftyFifty="callFiftyFifty"
             @useAudienceHelp="useAudienceHelp"
           />
           <h2 class="game-page__question">{{ currentQuestion.text }}</h2>

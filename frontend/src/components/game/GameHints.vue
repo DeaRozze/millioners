@@ -14,7 +14,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  (e: 'useFiftyFifty'): void
+  (e: 'callFiftyFifty'): void
   (e: 'useAudienceHelp'): void
 }>()
 
@@ -28,7 +28,7 @@ const audienceHelpTooltip = ref<boolean>(false)
       <button
         class="game-hints__hint"
         :class="{ 'game-hints__hint--used': props.hints.fiftyFifty.used }"
-        @click="emit('useFiftyFifty')"
+        @click="emit('callFiftyFifty')"
         @mouseenter="props.hints.fiftyFifty.used ? (fiftyFiftyTooltip = true) : null"
         @mouseleave="fiftyFiftyTooltip = false"
         :disabled="props.hints.fiftyFifty.used || props.disabled"

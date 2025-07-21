@@ -15,7 +15,7 @@ interface GameHintsReturn {
   hints: Ref<Hints>
   hiddenAnswers: Ref<number[]>
   audiencePercentages: Ref<Record<number, number>>
-  useFiftyFifty: () => void
+  callFiftyFifty: () => void
   useAudienceHelp: () => void
   resetHints: () => void
 }
@@ -49,7 +49,7 @@ export function useGameHints(answers: Ref<Answer[]>): GameHintsReturn {
     return percentages
   }
 
-  const useFiftyFifty = (): void => {
+  const callFiftyFifty = (): void => {
     const incorrectAnswers = answers.value
       .filter((answer) => !answer.isCorrect)
       .map((answer) => answer.id)
@@ -79,7 +79,7 @@ export function useGameHints(answers: Ref<Answer[]>): GameHintsReturn {
     hints,
     hiddenAnswers,
     audiencePercentages,
-    useFiftyFifty,
+    callFiftyFifty,
     useAudienceHelp,
     resetHints,
   }

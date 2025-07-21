@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { onClickOutside } from '@vueuse/core'
+import { defineModel } from 'vue'
+import { onClickOutside, templateRef } from '@vueuse/core'
 
 const modelValue = defineModel<boolean>()
 
-const modalContentRef = ref<HTMLElement | null>(null)
+const modalContentRef = templateRef<HTMLElement | null>('modalContentRef')
 
 onClickOutside(modalContentRef, () => {
   modelValue.value = false

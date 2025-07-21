@@ -65,9 +65,8 @@ const pyramidSteps = computed(() => {
   }
 }
 
-// Анимация для исчезновения пройденных ступеней
 .pyramid-fade-leave-active {
-  transition: all 0.5s ease;
+  transition: all 0.3s ease;
   position: absolute;
 }
 

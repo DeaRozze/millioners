@@ -7,14 +7,16 @@ const props = withDefaults(defineProps<Props>(), {
   primary: true,
 })
 
-defineEmits(['click'])
+const emit = defineEmits<{
+  (e: 'click'): void
+}>()
 </script>
 
 <template>
   <button
     class="app-button"
     :class="{ 'app-button--primary': props.primary }"
-    @click="$emit('click')"
+    @click="emit('click')"
   >
     <slot></slot>
   </button>

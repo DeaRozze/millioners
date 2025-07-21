@@ -13,7 +13,10 @@ interface Props {
 }
 const props = defineProps<Props>()
 
-const emit = defineEmits(['useFiftyFifty', 'useAudienceHelp'])
+const emit = defineEmits<{
+  (e: 'useFiftyFifty'): void
+  (e: 'useAudienceHelp'): void
+}>()
 
 const fiftyFiftyTooltip = ref<boolean>(false)
 const audienceHelpTooltip = ref<boolean>(false)

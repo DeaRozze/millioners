@@ -10,7 +10,9 @@ const authStore = useAuthStore()
 const { setTimer } = useTimers()
 
 const modelValue = defineModel<boolean>()
-const emit = defineEmits(['auth-success'])
+const emit = defineEmits<{
+  (e: 'auth-success'): void
+}>()
 
 const closeModal = (): void => {
   modelValue.value = false

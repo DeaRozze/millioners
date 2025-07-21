@@ -78,6 +78,6 @@ serve(
     port,
   },
   () => {
-    console.log(`jopa`)
+    console.log(`сервер запущен`)
   },
 )

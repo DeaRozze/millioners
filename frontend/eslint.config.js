@@ -44,7 +44,9 @@ export default defineConfig([
           varsIgnorePattern: '^_',
           args: 'after-used',
           ignoreRestSiblings: true,
-          caughtErrors: 'none'
+          caughtErrors: 'none',
+          vars: 'all',
+          ignorePattern: '^_|^e$|^event$',
         },
       ],
     },
@@ -75,7 +77,8 @@ export default defineConfig([
           varsIgnorePattern: '^_',
           args: 'after-used',
           ignoreRestSiblings: true,
-          caughtErrors: 'none'
+          caughtErrors: 'none',
+          ignorePattern: '^_|^e$|^event$',
         },
       ],
       'vue/max-attributes-per-line': [

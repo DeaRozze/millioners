@@ -20,6 +20,6 @@
     "strictNullChecks": true,
     "noUnusedLocals": true
   },
-  "include": ["src", "server.ts"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
   "exclude": ["node_modules", "dist"]
 }

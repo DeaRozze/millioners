@@ -1,5 +1,4 @@
 import { ref, onMounted, Ref } from 'vue'
-import { useLocalStorage } from '@vueuse/core'
 import type { Question } from '@/types/game'
 
 interface UseQuestionsReturn {
@@ -10,7 +9,7 @@ interface UseQuestionsReturn {
 }
 
 export function useQuestions(): UseQuestionsReturn {
-  const questions = useLocalStorage<Question[]>('game-questions', [])
+  const questions = ref<Question[]>([])
   const isLoading = ref<boolean>(true)
   const error = ref<string | null>(null)
 

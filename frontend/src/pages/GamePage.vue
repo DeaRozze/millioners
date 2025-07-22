@@ -3,7 +3,7 @@ import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import GameHints from '@/components/game/GameHints.vue'
 import PrizePyramid from '@/components/game/PrizePyramid.vue'
-import { computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAnswerLogic } from '@/composables/game/useAnswerLogic'
 import { useQuestions } from '@/composables/game/useQuestions'
 import { useGameStore } from '@/stores/gameStore'
@@ -15,6 +15,8 @@ import { storeToRefs } from 'pinia'
 
 const soundStore = useSoundStore()
 const gameStore = useGameStore()
+
+const showExitConfirmation = ref(false)
 
 const { selectedAnswerId, showResult, prize, currentQuestionIndex, nextPrize } =
   storeToRefs(gameStore)
@@ -82,9 +84,7 @@ onUnmounted(() => {
 <template>
   <div class="game-page">
     <div class="game-page__header">
-      <router-link :to="ROUTE_PATHS.HOME">
-        <AppButton @click="resetToHomeState">На главную</AppButton>
-      </router-link>
+      <AppButton @click="showExitConfirmation = true">На главную</AppButton>
       <div class="game-page__prize-info">
         <div>Текущий приз: {{ prize }} ₽</div>
         <div v-if="!showResult">Следующий приз: {{ nextPrize }} ₽</div>
@@ -143,12 +143,27 @@ onUnmounted(() => {
 
     <AppModal v-model="showResultModal">
       <div class="result-modal">
-        <h2 class="result-modal__title">Как жаль - вы проиграли!</h2>
+        <h2 class="result-modal__title">Не правильный ответ! Вы проиграли!</h2>
         <div class="result-modal__buttons">
           <AppButton @click="playAgain">Играть снова</AppButton>
           <router-link :to="ROUTE_PATHS.HOME">
             <AppButton @click="resetToHomeState">На главную</AppButton>
           </router-link>
+        </div>
+      </div>
+    </AppModal>
+
+    <AppModal v-model="showExitConfirmation">
+      <div class="exit-confirmation">
+        <h2 class="exit-confirmation__title">Подтверждение выхода</h2>
+        <p class="exit-confirmation__message">
+          Вы уверены, что хотите выйти из игры? Весь прогресс будет потерян.
+        </p>
+        <div class="exit-confirmation__buttons">
+          <router-link :to="ROUTE_PATHS.HOME">
+            <AppButton @click="resetToHomeState">Да, выйти</AppButton>
+          </router-link>
+          <AppButton @click="showExitConfirmation = false">Нет, остаться</AppButton>
         </div>
       </div>
     </AppModal>
@@ -304,6 +319,31 @@ onUnmounted(() => {
     font-size: var(--font-size-xxl);
     color: #f44336;
     margin-bottom: var(--spacing-xl);
+  }
+
+  &__buttons {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+}
+
+.exit-confirmation {
+  text-align: center;
+  padding: var(--spacing-xl);
+
+  &__title {
+    font-size: var(--font-size-xl);
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-md);
+  }
+
+  &__message {
+    margin-bottom: var(--spacing-xl);
+    font-size: var(--font-size-lg);
   }
 
   &__buttons {

@@ -2,6 +2,7 @@
 import AppButton from '@/components/UI/AppButton.vue'
 import AppModal from '@/components/UI/AppModal.vue'
 import GameHints from '@/components/game/GameHints.vue'
+import PrizePyramid from '@/components/game/PrizePyramid.vue'
 import { computed, onMounted, onUnmounted } from 'vue'
 import { useAnswerLogic } from '@/composables/game/useAnswerLogic'
 import { useQuestions } from '@/composables/game/useQuestions'
@@ -10,40 +11,13 @@ import { ROUTE_PATHS } from '@/constants/routes'
 import { useGameHints } from '@/composables/game/useGameHints'
 import { useSoundStore } from '@/stores/soundStore'
 import type { Question as QuizQuestion } from '@/types/game'
-import PrizePyramid from '@/components/game/PrizePyramid.vue'
+import { storeToRefs } from 'pinia'
 
 const soundStore = useSoundStore()
 const gameStore = useGameStore()
 
-const selectedAnswerId = computed({
-  get: () => gameStore.selectedAnswerId,
-  set: (value) => {
-    gameStore.selectedAnswerId = value
-  },
-})
-
-const showResult = computed({
-  get: () => gameStore.showResult,
-  set: (value) => {
-    gameStore.showResult = value
-  },
-})
-
-const prize = computed({
-  get: () => gameStore.prize,
-  set: (value) => {
-    gameStore.prize = value
-  },
-})
-
-const currentQuestionIndex = computed({
-  get: () => gameStore.currentQuestionIndex,
-  set: (value) => {
-    gameStore.currentQuestionIndex = value
-  },
-})
-
-const nextPrize = computed(() => gameStore.nextPrize)
+const { selectedAnswerId, showResult, prize, currentQuestionIndex, nextPrize } =
+  storeToRefs(gameStore)
 
 const { questions, isLoading, error, loadQuestions } = useQuestions()
 const currentQuestion = computed<QuizQuestion | null>(
@@ -52,6 +26,10 @@ const currentQuestion = computed<QuizQuestion | null>(
 
 const { hints, hiddenAnswers, audiencePercentages, callFiftyFifty, useAudienceHelp, resetHints } =
   useGameHints(computed(() => currentQuestion.value?.answers || []))
+
+const getAnswerPercentage = (answerId: number): number | null => {
+  return audiencePercentages.value[answerId] || null
+}
 
 const { getAnswerClass, selectAnswer, showResultModal } = useAnswerLogic({
   questions,
@@ -62,16 +40,13 @@ const { getAnswerClass, selectAnswer, showResultModal } = useAnswerLogic({
   hiddenAnswers,
 })
 
-const getAnswerPercentage = (answerId: number): number | null => {
-  return audiencePercentages.value[answerId] || null
-}
-
 const checkCurrentQuestion = (): void => {
   const gameFinished = currentQuestionIndex.value >= questions.value.length - 1
   if (gameFinished) {
     gameStore.resetGameState()
     return
   }
+
   currentQuestionIndex.value++
   soundStore.resumeGameMusic()
   selectedAnswerId.value = null

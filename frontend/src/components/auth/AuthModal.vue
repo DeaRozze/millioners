@@ -4,6 +4,7 @@ import AppButton from '@/components/UI/AppButton.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useTimers } from '@/composables/timers/useTimers'
 import { useSoundStore } from '@/stores/soundStore'
+import { ref } from 'vue'
 
 const soundStore = useSoundStore()
 const authStore = useAuthStore()
@@ -13,6 +14,9 @@ const modelValue = defineModel<boolean>()
 const emit = defineEmits<{
   (e: 'auth-success'): void
 }>()
+
+const isLoading = ref(false)
+const error = ref('')
 
 const closeModal = (): void => {
   modelValue.value = false
@@ -26,17 +30,30 @@ const delayedAuthSuccessAction = (): void => {
   }, 1500)
 }
 
-const submitAuthForm = (): void => {
-  const { name, password } = authStore.formData
+const submitAuthForm = async (): Promise<void> => {
+  isLoading.value = true
+  error.value = ''
 
-  if (authStore.isLoginMode) {
-    if (authStore.login(name, password)) {
-      delayedAuthSuccessAction()
+  try {
+    const { name, password } = authStore.formData
+    let success: boolean
+
+    if (authStore.isLoginMode) {
+      success = await authStore.login(name, password)
+    } else {
+      success = await authStore.register(name, password)
     }
-  } else {
-    if (authStore.register(name, password)) {
+
+    if (success) {
       delayedAuthSuccessAction()
+    } else {
+      error.value = authStore.errorMessage
     }
+  } catch (err) {
+    error.value = 'Произошла ошибка при авторизации'
+    console.error(err)
+  } finally {
+    isLoading.value = false
   }
 }
 
@@ -59,6 +76,13 @@ const signalAvatarError = (): void => {
       class="auth-modal__success"
     >
       {{ authStore.successMessage }}
+    </div>
+
+    <div
+      v-if="error"
+      class="auth-modal__error"
+    >
+      {{ error }}
     </div>
 
     <form
@@ -130,19 +154,13 @@ const signalAvatarError = (): void => {
         </div>
       </div>
 
-      <div
-        v-if="authStore.errorMessage"
-        class="auth-modal__error"
-      >
-        {{ authStore.errorMessage }}
-      </div>
-
       <div class="auth-modal__buttons">
         <AppButton
           type="submit"
           class="auth-modal__submit"
+          :disabled="isLoading"
         >
-          {{ authStore.isLoginMode ? 'Войти' : 'Зарегистрироваться' }}
+          {{ isLoading ? 'Загрузка...' : authStore.isLoginMode ? 'Войти' : 'Зарегистрироваться' }}
         </AppButton>
         <button
           type="button"

@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
     name: '',
     password: '',
   })
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 
   const errorMessage = ref<string>('')
   const successMessage = ref<string>('')
@@ -37,59 +38,85 @@ export const useAuthStore = defineStore('auth', () => {
     avatarFile.value = ''
   }
 
-  const login = (name: string, password: string): boolean => {
-    errorMessage.value = ''
-    successMessage.value = ''
+  const login = async (name: string, password: string): Promise<boolean> => {
+  errorMessage.value = '';
+  successMessage.value = '';
 
-    if (!name || !password) {
-      errorMessage.value = 'Заполните все поля'
-      return false
+  try {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username: name, password }),
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      errorMessage.value = errorData.error || 'Login failed';
+      return false;
     }
 
-    const foundUser = users.value.find((user) => user.name === name && user.password === password)
+    const { token, avatar } = await response.json();
+    localStorage.setItem('token', token);
 
-    if (!foundUser) {
-      errorMessage.value = 'Неверное имя пользователя или пароль'
-      return false
-    }
-
-    currentUser.value = foundUser
-    successMessage.value = `Добро пожаловать, ${foundUser.name}!`
-    return true
-  }
-
-  const register = (name: string, password: string): boolean => {
-    errorMessage.value = ''
-    successMessage.value = ''
-
-    if (!name || !password) {
-      errorMessage.value = 'Заполните все поля'
-      return false
-    }
-
-    if (!avatarFile.value) {
-      errorMessage.value = 'Пожалуйста, загрузите аватар'
-      return false
-    }
-
-    if (users.value.some((user) => user.name === name)) {
-      errorMessage.value = 'Пользователь с таким именем уже существует'
-      return false
-    }
-
-    const newUser: User = {
+    currentUser.value = {
       name,
-      password,
-      avatar: avatarFile.value,
+      password: '',
+      avatar: avatar || '',
+    };
+
+    return true;
+  } catch (error) {
+    errorMessage.value = 'Network error';
+    return false;
+  }
+};
+
+const register = async (name: string, password: string): Promise<boolean> => {
+  errorMessage.value = '';
+  successMessage.value = '';
+
+  try {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: name,
+        password,
+        avatar: avatarFile.value
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      errorMessage.value = errorData.error || 'Registration failed';
+      return false;
     }
 
-    users.value.push(newUser)
-    currentUser.value = newUser
-    successMessage.value = `Регистрация прошла успешно, ${newUser.name}!`
-    return true
+    const { token, avatar } = await response.json();
+    localStorage.setItem('token', token);
+
+    currentUser.value = {
+      name,
+      password: '',
+      avatar: avatar || avatarFile.value,
+    };
+
+    users.value.push(currentUser.value);
+    successMessage.value = `Registration successful, ${name}!`;
+    return true;
+  } catch (error) {
+    errorMessage.value = 'Network error';
+    return false;
   }
+};
 
   const logout = (): void => {
+    localStorage.removeItem('token')
     currentUser.value = {} as User
   }
 

@@ -7,32 +7,31 @@ import authRouter from "./routes/authRouter";
 
 const app = new Hono();
 
-app.use("*", async (c, next) => {
-  try {
-    return await next();
-  } catch (err) {
-    console.error(err);
+app.use("*", logger());
 
-    return c.json(
-      { error: "Internal Server Error" },
-      {
-        status: 500,
-        headers: {
-          "Access-Control-Allow-Origin": c.req.header("Origin") || "",
-          "Access-Control-Allow-Credentials": "true",
-          "Access-Control-Allow-Headers": "Content-Type,Authorization",
-        },
-      }
-    );
-  }
-});
+app.use(
+  "*",
+  cors({
+    origin: (origin) => {
+      if (!origin) return null;
 
-app.use("*", async (c, next) => {
-  if (c.req.method === "OPTIONS") {
-    return c.json({ message: "ok" }, { status: 201 });
-  }
-  return next();
-});
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://millioners.vercel.app",
+      ];
+
+      origin = origin.toLowerCase();
+
+      if (allowedOrigins.includes(origin)) return origin;
+      if (origin.endsWith(".vercel.app")) return origin;
+
+      return null;
+    },
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
 
 app.route("/api/questions", questionsRouter);
 app.route("/api/auth", authRouter);

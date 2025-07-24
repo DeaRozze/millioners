@@ -8,14 +8,20 @@ import authRouter from "./routes/authRouter"; // Добавьте этот им�
 const app = new Hono();
 
 app.use("*", logger());
-app.use("*", cors({
-  origin: ["http://localhost:5173"],
-  allowHeaders: ["Content-Type", "Authorization"],
-  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  exposeHeaders: ["Content-Length"],
-  maxAge: 600,
-  credentials: true,
-}));
+app.use(
+  "*",
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://millioners-d10p10h5v-dearozzes-projects.vercel.app",
+    ],
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  })
+);
 
 app.route("/api/questions", questionsRouter);
 app.route("/api/auth", authRouter); // Добавьте этот маршрут

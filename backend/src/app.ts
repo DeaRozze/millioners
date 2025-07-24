@@ -16,6 +16,7 @@ app.use(
       "https://millioners-d10p10h5v-dearozzes-projects.vercel.app",
       "https://millioners-r46p5v08h-dearozzes-projects.vercel.app",
       "https://millioners.vercel.app",
+      "https://millioners-3v16jzpbw-dearozzes-projects.vercel.app",
     ],
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],

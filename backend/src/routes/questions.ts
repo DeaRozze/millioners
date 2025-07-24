@@ -7,6 +7,11 @@ router.get("/", async (c) => {
   try {
     const amount = c.req.query("amount") || "10";
     const questions = await fetchQuestions(amount);
+
+    if (!questions || questions.length === 0) {
+      return c.json({ error: "No questions available" }, 503);
+    }
+
     return c.json({ questions });
   } catch (error) {
     console.error("Error fetching questions:", error);

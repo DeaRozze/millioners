@@ -31,6 +31,10 @@ export const fetchQuestions = async (amount: string) => {
       throw new Error(`API response error: ${data.response_code}`);
     }
 
+    if (!data.results || data.results.length === 0) {
+      throw new Error("No questions received from API");
+    }
+
     return data.results.map((question, index) => ({
       id: index + 1,
       text: decodeHtml(question.question),
@@ -44,6 +48,6 @@ export const fetchQuestions = async (amount: string) => {
     }));
   } catch (error) {
     console.error("Error fetching questions from OpenTDB:", error);
-    throw error; 
+    throw error;
   }
 };

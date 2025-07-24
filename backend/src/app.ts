@@ -14,6 +14,8 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://millioners-d10p10h5v-dearozzes-projects.vercel.app",
+      "https://millioners-r46p5v08h-dearozzes-projects.vercel.app",
+      "https://millioners.vercel.app",
     ],
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],

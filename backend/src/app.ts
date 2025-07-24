@@ -16,7 +16,7 @@ app.use(
       "https://millioners-d10p10h5v-dearozzes-projects.vercel.app",
       "https://millioners-r46p5v08h-dearozzes-projects.vercel.app",
       "https://millioners.vercel.app",
-      "https://millioners-3v16jzpbw-dearozzes-projects.vercel.app",
+      "https://millioners-3v16jzpbw-dearozzes-projects.vercel.app", // ✅ ОБЯЗАТЕЛЬНО
     ],
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -25,6 +25,12 @@ app.use(
     credentials: true,
   })
 );
+app.use("*", async (c, next) => {
+  if (c.req.method === "OPTIONS") {
+    return c.json({ message: "ok" }, { status: 201 }); // Быстро отвечаем без тела
+  }
+  return next();
+});
 
 app.route("/api/questions", questionsRouter);
 app.route("/api/auth", authRouter); // Добавьте этот маршрут

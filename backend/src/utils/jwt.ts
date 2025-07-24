@@ -12,10 +12,21 @@ interface JwtPayload {
 
 export const generateToken = (payload: JwtPayload): string => {
   if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined");
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+  
+  return jwt.sign(
+    payload, 
+    JWT_SECRET, 
+    { 
+      expiresIn: JWT_EXPIRES_IN,
+      algorithm: "HS256" // explicitly specify the algorithm
+    } as jwt.SignOptions
+  );
 };
 
 export const verifyToken = (token: string): JwtPayload => {
   if (!JWT_SECRET) throw new Error("JWT_SECRET is not defined");
-  return jwt.verify(token, JWT_SECRET) as JwtPayload;
+  
+  return jwt.verify(token, JWT_SECRET, {
+    algorithms: ["HS256"]
+  }) as JwtPayload;
 };

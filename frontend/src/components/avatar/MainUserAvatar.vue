@@ -12,10 +12,12 @@ const avatarUrl = computed<string>(() => authStore.currentUser?.avatar || '/defa
 const username = computed<string>(() => authStore.currentUser?.name || 'Гость')
 
 function showAuthOrProfileModal(): void {
-  if (authStore.currentUser?.name) {
+  if (authStore.isAuthenticated) {
     isProfileModalOpen.value = true
   } else {
     isAuthModalOpen.value = true
+    authStore.isLoginMode = true
+    authStore.resetAuthForm()
   }
 }
 </script>
@@ -42,7 +44,7 @@ function showAuthOrProfileModal(): void {
 
     <AuthModal
       v-model="isAuthModalOpen"
-      v-if="!authStore.currentUser?.name"
+      @auth-success="isProfileModalOpen = true"
     />
   </div>
 </template>

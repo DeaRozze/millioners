@@ -15,7 +15,6 @@ interface AuthForm {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-  const users = useLocalStorage<User[]>('millionaire-users', [])
   const currentUser = useLocalStorage<User>('current-user', {} as User)
   const isLoginMode = ref<boolean>(true)
   const formData = ref<AuthForm>({
@@ -31,7 +30,6 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed<boolean>(() => !!currentUser.value?.name)
 
   const resetAuthForm = (): void => {
-    isLoginMode.value = !isLoginMode.value
     formData.value = { name: '', password: '' }
     errorMessage.value = ''
     successMessage.value = ''
@@ -39,81 +37,80 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const login = async (name: string, password: string): Promise<boolean> => {
-  errorMessage.value = '';
-  successMessage.value = '';
+    errorMessage.value = ''
+    successMessage.value = ''
 
-  try {
-    const response = await fetch(`${API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username: name, password }),
-      credentials: 'include',
-    });
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username: name, password }),
+      })
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      errorMessage.value = errorData.error || 'Login failed';
-      return false;
+      if (!response.ok) {
+        const errorData = await response.json()
+        errorMessage.value = errorData.error || 'Login failed'
+        return false
+      }
+
+      const { token, username, avatar } = await response.json()
+      localStorage.setItem('token', token)
+
+      currentUser.value = {
+        name: username,
+        password: '',
+        avatar: avatar || '',
+      }
+
+      successMessage.value = `Welcome back, ${username}!`
+      return true
+    } catch (error) {
+      errorMessage.value = 'Network error'
+      return false
     }
-
-    const { token, avatar } = await response.json();
-    localStorage.setItem('token', token);
-
-    currentUser.value = {
-      name,
-      password: '',
-      avatar: avatar || '',
-    };
-
-    return true;
-  } catch (error) {
-    errorMessage.value = 'Network error';
-    return false;
   }
-};
 
-const register = async (name: string, password: string): Promise<boolean> => {
-  errorMessage.value = '';
-  successMessage.value = '';
+  const register = async (name: string, password: string): Promise<boolean> => {
+    errorMessage.value = ''
+    successMessage.value = ''
 
-  try {
-    const response = await fetch(`${API_URL}/auth/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: name,
-        password,
-        avatar: avatarFile.value
-      }),
-    });
+    try {
+      const response = await fetch(`${API_URL}/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: name,
+          password,
+          avatar: avatarFile.value,
+        }),
+      })
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      errorMessage.value = errorData.error || 'Registration failed';
-      return false;
+      if (!response.ok) {
+        const errorData = await response.json()
+        errorMessage.value = errorData.error || 'Registration failed'
+        return false
+      }
+
+      const { token, username } = await response.json()
+      localStorage.setItem('token', token)
+
+      currentUser.value = {
+        name: username,
+        password: '',
+        avatar: avatarFile.value || '',
+      }
+
+      successMessage.value = `Registration successful, ${name}!`
+      return true
+    } catch (error) {
+      errorMessage.value = 'Network error'
+      return false
     }
-
-    const { token, avatar } = await response.json();
-    localStorage.setItem('token', token);
-
-    currentUser.value = {
-      name,
-      password: '',
-      avatar: avatar || avatarFile.value,
-    };
-
-    users.value.push(currentUser.value);
-    successMessage.value = `Registration successful, ${name}!`;
-    return true;
-  } catch (error) {
-    errorMessage.value = 'Network error';
-    return false;
   }
-};
 
   const logout = (): void => {
     localStorage.removeItem('token')
@@ -145,7 +142,6 @@ const register = async (name: string, password: string): Promise<boolean> => {
   })
 
   return {
-    users,
     currentUser,
     errorMessage,
     successMessage,

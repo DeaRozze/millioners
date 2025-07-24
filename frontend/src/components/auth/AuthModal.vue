@@ -57,6 +57,12 @@ const submitAuthForm = async (): Promise<void> => {
   }
 }
 
+const toggleAuthMode = (): void => {
+  authStore.isLoginMode = !authStore.isLoginMode
+  authStore.resetAuthForm()
+  error.value = ''
+}
+
 const triggerFileInput = (): void => {
   authStore.openFileDialog()
 }
@@ -165,7 +171,7 @@ const signalAvatarError = (): void => {
         <button
           type="button"
           class="auth-modal__toggle-mode"
-          @click="authStore.resetAuthForm"
+          @click="toggleAuthMode"
         >
           {{
             authStore.isLoginMode ? 'Нет аккаунта? Зарегистрироваться' : 'Уже есть аккаунт? Войти'

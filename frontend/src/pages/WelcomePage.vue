@@ -6,8 +6,10 @@ import AuthModal from '@/components/auth/AuthModal.vue'
 import MainUserAvatar from '@/components/avatar/MainUserAvatar.vue'
 import { ROUTE_PATHS } from '@/constants/routes'
 import { useSoundStore } from '@/stores/soundStore'
+import { useAuthStore } from '@/stores/authStore'
 
 const soundStore = useSoundStore()
+const authStore = useAuthStore()
 const isRulesModalOpen = ref<boolean>(false)
 const isSettingsModalOpen = ref<boolean>(false)
 const isAuthModalOpen = ref<boolean>(false)
@@ -33,6 +35,12 @@ const playMainSoundOnAuth = (): void => {
   soundStore.playMain()
 }
 
+const openAuthModal = (): void => {
+  authStore.isLoginMode = true
+  authStore.resetAuthForm()
+  isAuthModalOpen.value = true
+}
+
 onUnmounted(() => {
   soundStore.stopAll()
 })
@@ -53,7 +61,7 @@ onUnmounted(() => {
         </router-link>
         <AppButton @click="isRulesModalOpen = true">Правила игры</AppButton>
         <AppButton @click="isSettingsModalOpen = true">Настройки</AppButton>
-        <AppButton @click="isAuthModalOpen = true">Войти/Регистрация</AppButton>
+        <AppButton @click="openAuthModal">Войти/Регистрация</AppButton>
       </div>
     </div>
 

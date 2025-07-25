@@ -57,6 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       const { token, username, avatar } = await response.json()
       localStorage.setItem('token', token)
+      console.log(avatar)
 
       currentUser.value = {
         name: username,
@@ -85,7 +86,7 @@ export const useAuthStore = defineStore('auth', () => {
         body: JSON.stringify({
           username: name,
           password,
-          avatar: avatarFile.value,
+          avatar: avatarFile.value, 
         }),
       })
 
@@ -95,13 +96,13 @@ export const useAuthStore = defineStore('auth', () => {
         return false
       }
 
-      const { token, username } = await response.json()
+      const { token, username, avatar } = await response.json()
       localStorage.setItem('token', token)
 
       currentUser.value = {
         name: username,
         password: '',
-        avatar: avatarFile.value || '',
+        avatar: avatar || '',
       }
 
       successMessage.value = `Registration successful, ${name}!`
@@ -111,7 +112,6 @@ export const useAuthStore = defineStore('auth', () => {
       return false
     }
   }
-
   const logout = (): void => {
     localStorage.removeItem('token')
     currentUser.value = {} as User
@@ -126,20 +126,23 @@ export const useAuthStore = defineStore('auth', () => {
     multiple: false,
   })
 
-  watch(files, (newFiles) => {
-    if (!newFiles) return
-    const file = newFiles[0]
-    if (!file) return
+ watch(files, (newFiles) => {
+  if (!newFiles) return
+  const file = newFiles[0]
+  if (!file) return
 
-    const reader = new FileReader()
-    reader.onload = (e) => {
-      if (e.target?.result) {
-        avatarFile.value = e.target.result as string
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    if (e.target?.result) {
+      avatarFile.value = e.target.result as string
+      if (currentUser.value) {
+        currentUser.value.avatar = e.target.result as string
       }
     }
-    reader.readAsDataURL(file)
-    resetFileDialog()
-  })
+  }
+  reader.readAsDataURL(file)
+  resetFileDialog()
+})
 
   return {
     currentUser,

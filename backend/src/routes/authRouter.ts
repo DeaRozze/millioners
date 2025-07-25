@@ -2,14 +2,18 @@ import { Hono } from "hono";
 import { generateToken } from "../utils/jwt";
 import { hashPassword, comparePasswords } from "../utils/hash";
 import { authMiddleware } from "../middlewares/authMiddleware";
+import { log } from "console";
 
 const router = new Hono();
 
-const users = new Map<string, { username: string; password: string; avatar?: string }>();
-
+const users = new Map<
+  string,
+  { username: string; password: string; avatar?: string }
+>();
+log("ff");
 router.post("/register", async (c) => {
   try {
-    const { username, password } = await c.req.json();
+    const { username, password, avatar } = await c.req.json();
 
     if (!username || !password) {
       return c.json({ error: "Username and password are required" }, 400);
@@ -20,10 +24,10 @@ router.post("/register", async (c) => {
     }
 
     const hashedPassword = await hashPassword(password);
-    users.set(username, { username, password: hashedPassword });
+    users.set(username, { username, password: hashedPassword, avatar });
 
     const token = generateToken({ username });
-    return c.json({ token, username });
+    return c.json({ token, username, avatar });
   } catch (error) {
     console.error("Registration error:", error);
     return c.json({ error: "Internal server error" }, 500);
@@ -31,6 +35,7 @@ router.post("/register", async (c) => {
 });
 
 router.post("/login", async (c) => {
+  console.log("загрузился ли?");
   try {
     const { username, password } = await c.req.json();
 
@@ -49,6 +54,7 @@ router.post("/login", async (c) => {
     }
 
     const token = generateToken({ username });
+    console.log(user.avatar);
     return c.json({ token, username, avatar: user.avatar });
   } catch (error) {
     console.error("Login error:", error);

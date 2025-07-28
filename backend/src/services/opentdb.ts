@@ -1,4 +1,5 @@
-import { decodeHtml, shuffleAnswers } from "../utils/htmlUtils";
+import { shuffleAnswers } from "../utils/shuffleAnswers";
+import { decodeHtml } from "../utils/decode";
 
 type OpenTDBQuestion = {
   question: string;

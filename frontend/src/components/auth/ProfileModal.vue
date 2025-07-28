@@ -6,6 +6,7 @@ import { useSoundStore } from '@/stores/soundStore'
 
 const authStore = useAuthStore()
 const modelValue = defineModel<boolean>()
+const soundStore = useSoundStore()
 
 interface Props {
   avatarUrl: string
@@ -15,7 +16,6 @@ interface Props {
 defineProps<Props>()
 
 const onLogout = (): void => {
-  const soundStore = useSoundStore()
   authStore.logout()
   soundStore.stopAll()
   modelValue.value = false
@@ -53,11 +53,11 @@ const onLogout = (): void => {
   text-align: center;
 
   &__avatar-wrapper {
-    width: 80px; // Уменьшил размер кружка
+    width: 80px;
     height: 80px;
     border-radius: 50%;
     overflow: hidden;
-    border: 2px solid var(--color-primary); // Более тонкая рамка
+    border: 2px solid var(--color-primary);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -71,7 +71,7 @@ const onLogout = (): void => {
   }
 
   &__name {
-    font-size: var(--font-size-lg); // Сделал меньше размер имени
+    font-size: var(--font-size-lg); 
     color: var(--color-accent);
     margin: var(--spacing-sm) 0;
   }

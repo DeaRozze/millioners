@@ -42,12 +42,13 @@ const checkCurrentQuestion = (): void => {
     return
   }
 
-  gameStore.currentQuestionIndex++
-  soundStore.resumeGameMusic()
   gameStore.selectedAnswerId = null
   gameStore.showResult = false
   hiddenAnswers.value = []
   audiencePercentages.value = {}
+
+  gameStore.currentQuestionIndex++
+  soundStore.resumeGameMusic()
 }
 
 const playAgain = (): void => {

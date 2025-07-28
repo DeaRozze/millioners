@@ -1,4 +1,5 @@
 import { ref, onMounted, Ref } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
 import type { Question } from '@/types/game'
 
 interface UseQuestionsReturn {
@@ -12,6 +13,8 @@ export function useQuestions(): UseQuestionsReturn {
   const questions = ref<Question[]>([])
   const isLoading = ref<boolean>(true)
   const error = ref<string | null>(null)
+
+  const storedQuestions = useLocalStorage<Question[]>('game-questions', [])
 
   const loadQuestions = async (retryCount = 3): Promise<void> => {
     isLoading.value = true
@@ -32,6 +35,13 @@ export function useQuestions(): UseQuestionsReturn {
       if (!data.questions || data.questions.length === 0) {
         throw new Error('No questions received from server')
       }
+
+      const questionsWithoutAnswers = data.questions.map((q: Question) => ({
+        ...q,
+        answers: []
+      }))
+
+      storedQuestions.value = questionsWithoutAnswers
 
       questions.value = data.questions
       error.value = null

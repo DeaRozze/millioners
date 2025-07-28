@@ -2,7 +2,6 @@ import { Hono } from "hono";
 import { generateToken } from "../utils/jwt";
 import { hashPassword, comparePasswords } from "../utils/hash";
 import { authMiddleware } from "../middlewares/authMiddleware";
-import { log } from "console";
 
 const router = new Hono();
 
@@ -10,17 +9,16 @@ const users = new Map<
   string,
   { username: string; password: string; avatar?: string }
 >();
-log("ff");
 router.post("/register", async (c) => {
   try {
     const { username, password, avatar } = await c.req.json();
 
     if (!username || !password) {
-      return c.json({ error: "Username and password are required" }, 400);
+      return c.json({ error: "Требуются имя пользователя и пароль" }, 400);
     }
 
     if (users.has(username)) {
-      return c.json({ error: "Username already exists" }, 400);
+      return c.json({ error: "Имя пользователя уже существует" }, 400);
     }
 
     const hashedPassword = await hashPassword(password);
@@ -29,8 +27,8 @@ router.post("/register", async (c) => {
     const token = generateToken({ username });
     return c.json({ token, username, avatar });
   } catch (error) {
-    console.error("Registration error:", error);
-    return c.json({ error: "Internal server error" }, 500);
+    console.error("Ошибка регистрации:", error);
+    return c.json({ error: "Внутренняя ошибка сервера" }, 500);
   }
 });
 
@@ -40,25 +38,25 @@ router.post("/login", async (c) => {
     const { username, password } = await c.req.json();
 
     if (!username || !password) {
-      return c.json({ error: "Username and password are required" }, 400);
+      return c.json({ error: "Требуются имя пользователя и пароль." }, 400);
     }
 
     const user = users.get(username);
     if (!user) {
-      return c.json({ error: "User not found" }, 404);
+      return c.json({ error: "Пользователь не найден" }, 404);
     }
 
     const isPasswordValid = await comparePasswords(password, user.password);
     if (!isPasswordValid) {
-      return c.json({ error: "Invalid password" }, 401);
+      return c.json({ error: "Неверный пароль" }, 401);
     }
 
     const token = generateToken({ username });
     console.log(user.avatar);
     return c.json({ token, username, avatar: user.avatar });
   } catch (error) {
-    console.error("Login error:", error);
-    return c.json({ error: "Internal server error" }, 500);
+    console.error("Ошибка входа:", error);
+    return c.json({ error: "Внутренняя ошибка сервера" }, 500);
   }
 });
 

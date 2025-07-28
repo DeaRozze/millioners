@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Context, Next } from "hono";
 import { verifyToken } from "../utils/jwt";
 
 declare module "hono" {
@@ -7,16 +7,16 @@ declare module "hono" {
   }
 }
 
-export const authMiddleware = async (c: any, next: any) => {
-  const authHeader = c.req.header("Authorization");
+export const authMiddleware = async (c: Context, next: Next) => {
+  const authHeader = c.req.header("Авторизация");
 
   if (!authHeader) {
-    return c.json({ error: "Authorization header missing" }, 401);
+    return c.json({ error: "Заголовок авторизации отсутствует" }, 401);
   }
 
   const token = authHeader.split(" ")[1];
   if (!token) {
-    return c.json({ error: "Token missing" }, 401);
+    return c.json({ error: "Токен отсутствует" }, 401);
   }
 
   try {
@@ -24,6 +24,6 @@ export const authMiddleware = async (c: any, next: any) => {
     c.set("user", decoded);
     await next();
   } catch (error) {
-    return c.json({ error: "Invalid or expired token" }, 401);
+    return c.json({ error: "Недействительный или просроченный токен" }, 401);
   }
 };

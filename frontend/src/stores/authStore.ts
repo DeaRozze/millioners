@@ -51,7 +51,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (!response.ok) {
         const errorData = await response.json()
-        errorMessage.value = errorData.error || 'Login failed'
+        errorMessage.value = errorData.error || 'Ошибка входа'
         return false
       }
 
@@ -65,10 +65,10 @@ export const useAuthStore = defineStore('auth', () => {
         avatar: avatar || '',
       }
 
-      successMessage.value = `Welcome back, ${username}!`
+      successMessage.value = `С возвращением, ${username}!`
       return true
     } catch (error) {
-      errorMessage.value = 'Network error'
+      errorMessage.value = 'Ошибка сети'
       return false
     }
   }
@@ -86,13 +86,13 @@ export const useAuthStore = defineStore('auth', () => {
         body: JSON.stringify({
           username: name,
           password,
-          avatar: avatarFile.value, 
+          avatar: avatarFile.value,
         }),
       })
 
       if (!response.ok) {
         const errorData = await response.json()
-        errorMessage.value = errorData.error || 'Registration failed'
+        errorMessage.value = errorData.error || 'Регистрация не удалась'
         return false
       }
 
@@ -105,10 +105,10 @@ export const useAuthStore = defineStore('auth', () => {
         avatar: avatar || '',
       }
 
-      successMessage.value = `Registration successful, ${name}!`
+      successMessage.value = `Регистрация прошла успешно, ${name}!`
       return true
     } catch (error) {
-      errorMessage.value = 'Network error'
+      errorMessage.value = 'Ошибка сети'
       return false
     }
   }

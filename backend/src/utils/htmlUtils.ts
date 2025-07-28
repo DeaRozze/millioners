@@ -7,7 +7,13 @@ export const decodeHtml = (text: string): string => {
     .replace(/&#039;/g, "'");
 };
 
-export const shuffleAnswers = (answers: any[]): any[] => {
+interface Answer {
+  text: string;
+  isCorrect: boolean;
+  id?: number;
+}
+
+export const shuffleAnswers = (answers: Answer[]): Answer[] => {
   return [...answers]
     .map((answer, index) => ({
       ...answer,
@@ -15,5 +21,3 @@ export const shuffleAnswers = (answers: any[]): any[] => {
     }))
     .sort(() => Math.random() - 0.5);
 };
-
-

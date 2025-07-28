@@ -9,20 +9,20 @@ router.get("/", async (c) => {
     const questions = await fetchQuestions(amount);
 
     if (!questions || questions.length === 0) {
-      return c.json({ error: "No questions available" }, 503);
+      return c.json({ error: "Нет доступных вопросов" }, 503);
     }
 
     return c.json({ questions });
   } catch (error) {
-    console.error("Error fetching questions:", error);
+    console.error("Ошибка при загрузке вопросов:", error);
 
     if (error instanceof Error && error.name === "AbortError") {
-      return c.json({ error: "Request to OpenTDB timed out" }, 504);
+      return c.json({ error: "Запрос к OpenTDB истек" }, 504);
     }
 
     return c.json(
       {
-        error: "Failed to fetch questions",
+        error: "Не удалось получить вопросы",
         details: error instanceof Error ? error.message : String(error),
       },
       500

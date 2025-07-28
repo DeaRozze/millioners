@@ -22,17 +22,17 @@ export const fetchQuestions = async (amount: string) => {
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`Ошибка API: ${response.status}`);
     }
 
     const data: OpenTDBResponse = await response.json();
 
     if (data.response_code !== 0) {
-      throw new Error(`API response error: ${data.response_code}`);
+      throw new Error(`Ошибка ответа API: ${data.response_code}`);
     }
 
     if (!data.results || data.results.length === 0) {
-      throw new Error("No questions received from API");
+      throw new Error("Вопросов от API не поступало");
     }
 
     return data.results.map((question, index) => ({
@@ -47,7 +47,7 @@ export const fetchQuestions = async (amount: string) => {
       ]),
     }));
   } catch (error) {
-    console.error("Error fetching questions from OpenTDB:", error);
+    console.error("Ошибка при загрузке вопросов из OpenTDB:", error);
     throw error;
   }
 };

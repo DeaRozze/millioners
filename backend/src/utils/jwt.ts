@@ -18,7 +18,7 @@ export const generateToken = (payload: JwtPayload): string => {
     JWT_SECRET, 
     { 
       expiresIn: JWT_EXPIRES_IN,
-      algorithm: "HS256" // explicitly specify the algorithm
+      algorithm: "HS256" 
     } as jwt.SignOptions
   );
 };

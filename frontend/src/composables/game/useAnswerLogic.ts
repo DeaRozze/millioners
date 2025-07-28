@@ -1,79 +1,65 @@
 import { PRIZE_STEPS } from '@/constants/game'
-import { ref, Ref } from 'vue'
+import { ref, type Ref } from 'vue'
 import { useSoundStore } from '@/stores/soundStore'
 import type { Question, Answer } from '@/types/game'
+import type { useGameStore } from '@/stores/gameStore'
 
 interface UseAnswerLogicProps {
   questions: Ref<Question[]>
-  selectedAnswerId: Ref<number | null>
-  showResult: Ref<boolean>
-  prize: Ref<number>
-  currentQuestionIndex: Ref<number>
   hiddenAnswers?: Ref<number[]>
-}
-interface UseAnswerLogicReturn {
-  getAnswerClass: (answer: Answer) => string
-  selectAnswer: (answerId: number) => Promise<void>
-  canGonextQuestion: () => boolean
-  isProcessing: Ref<boolean>
-  showResultModal: Ref<boolean>
+  gameStore: ReturnType<typeof useGameStore>
 }
 
-export function useAnswerLogic(props: UseAnswerLogicProps): UseAnswerLogicReturn {
+export function useAnswerLogic({ questions, hiddenAnswers, gameStore }: UseAnswerLogicProps) {
   const isProcessing = ref(false)
   const showResultModal = ref(false)
   const soundStore = useSoundStore()
 
   const getAnswerClass = (answer: Answer): string => {
-    if (props.hiddenAnswers?.value?.includes(answer.id)) return 'answer--hidden'
-    if (isProcessing.value && props.selectedAnswerId.value === answer.id) {
+    if (hiddenAnswers?.value?.includes(answer.id)) return 'answer--hidden'
+    if (isProcessing.value && gameStore.selectedAnswerId === answer.id) {
       return 'answer--selected answer--processing'
     }
-    if (!props.showResult.value) {
-      return props.selectedAnswerId.value === answer.id ? 'answer--selected' : ''
+    if (!gameStore.showResult) {
+      return gameStore.selectedAnswerId === answer.id ? 'answer--selected' : ''
     }
     if (answer.isCorrect) return 'answer--correct'
-    if (props.selectedAnswerId.value === answer.id && !answer.isCorrect) return 'answer--incorrect'
+    if (gameStore.selectedAnswerId === answer.id && !answer.isCorrect) return 'answer--incorrect'
     return ''
   }
 
   const selectAnswer = async (answerId: number): Promise<void> => {
-    if (
-      props.showResult.value ||
-      isProcessing.value ||
-      props.hiddenAnswers?.value?.includes(answerId)
-    )
+    if (gameStore.showResult || isProcessing.value || hiddenAnswers?.value?.includes(answerId))
       return
 
     soundStore.pauseGameMusic()
-    props.selectedAnswerId.value = answerId
+    gameStore.selectedAnswerId = answerId
     isProcessing.value = true
 
     await new Promise((resolve) => setTimeout(resolve, 1000))
 
     isProcessing.value = false
-    props.showResult.value = true
+    gameStore.showResult = true
 
-    const currentQuestion = props.questions.value[props.currentQuestionIndex.value]
+    const currentQuestion = questions.value[gameStore.currentQuestionIndex]
     const selectedAnswer = currentQuestion.answers.find((a) => a.id === answerId)
-
     if (!selectedAnswer) return
 
     soundStore[selectedAnswer.isCorrect ? 'playCorrectSound' : 'playWrongSound']()
 
     if (selectedAnswer.isCorrect) {
-      const currentLevel = PRIZE_STEPS.findIndex((step) => step > props.prize.value)
-      props.prize.value =
+      const currentLevel = PRIZE_STEPS.findIndex((step) => step > gameStore.prize)
+      gameStore.prize =
         currentLevel >= 0 ? PRIZE_STEPS[currentLevel] : PRIZE_STEPS[PRIZE_STEPS.length - 1]
     } else {
-      props.prize.value = 0
+      gameStore.prize = 0
       showResultModal.value = true
     }
   }
 
   const canGonextQuestion = (): boolean => {
-    props.currentQuestionIndex.value++
-    return props.currentQuestionIndex.value >= props.questions.value.length
+    gameStore.currentQuestionIndex++
+    return gameStore.currentQuestionIndex >= questions.value.length
   }
 
   return {

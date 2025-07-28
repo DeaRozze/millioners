@@ -11,19 +11,15 @@ import { ROUTE_PATHS } from '@/constants/routes'
 import { useGameHints } from '@/composables/game/useGameHints'
 import { useSoundStore } from '@/stores/soundStore'
 import type { Question as QuizQuestion } from '@/types/game'
-import { storeToRefs } from 'pinia'
 
 const soundStore = useSoundStore()
 const gameStore = useGameStore()
 
 const showExitConfirmation = ref(false)
 
-const { selectedAnswerId, showResult, prize, currentQuestionIndex, nextPrize } =
-  storeToRefs(gameStore)
-
 const { questions, isLoading, error, loadQuestions } = useQuestions()
 const currentQuestion = computed<QuizQuestion | null>(
-  () => questions.value?.[currentQuestionIndex.value] || null,
+  () => questions.value?.[gameStore.currentQuestionIndex] || null,
 )
 
 const { hints, hiddenAnswers, audiencePercentages, callFiftyFifty, useAudienceHelp, resetHints } =
@@ -35,24 +31,21 @@ const getAnswerPercentage = (answerId: number): number | null => {
 
 const { getAnswerClass, selectAnswer, showResultModal } = useAnswerLogic({
   questions,
-  currentQuestionIndex,
-  selectedAnswerId,
-  showResult,
-  prize,
   hiddenAnswers,
+  gameStore,
 })
 
 const checkCurrentQuestion = (): void => {
-  const gameFinished = currentQuestionIndex.value >= questions.value.length - 1
+  const gameFinished = gameStore.currentQuestionIndex >= questions.value.length - 1
   if (gameFinished) {
     gameStore.resetGameState()
     return
   }
 
-  currentQuestionIndex.value++
+  gameStore.currentQuestionIndex++
   soundStore.resumeGameMusic()
-  selectedAnswerId.value = null
-  showResult.value = false
+  gameStore.selectedAnswerId = null
+  gameStore.showResult = false
   hiddenAnswers.value = []
   audiencePercentages.value = {}
 }
@@ -86,8 +79,8 @@ onUnmounted(() => {
     <div class="game-page__header">
       <AppButton @click="showExitConfirmation = true">На главную</AppButton>
       <div class="game-page__prize-info">
-        <div>Текущий приз: {{ prize }} ₽</div>
-        <div v-if="!showResult">Следующий приз: {{ nextPrize }} ₽</div>
+        <div>Текущий приз: {{ gameStore.prize }} ₽</div>
+        <div v-if="!gameStore.showResult">Следующий приз: {{ gameStore.nextPrize }} ₽</div>
       </div>
     </div>
 
@@ -105,7 +98,7 @@ onUnmounted(() => {
         <div class="game-page__content">
           <GameHints
             :hints="hints"
-            :disabled="selectedAnswerId !== null"
+            :disabled="gameStore.selectedAnswerId !== null"
             @callFiftyFifty="callFiftyFifty"
             @useAudienceHelp="useAudienceHelp"
           />
@@ -128,16 +121,18 @@ onUnmounted(() => {
           </div>
 
           <AppButton
-            v-if="showResult"
+            v-if="gameStore.showResult"
             @click="checkCurrentQuestion"
             class="game-page__next-button"
           >
             {{
-              currentQuestionIndex < questions.length - 1 ? 'Следующий вопрос' : 'Завершить игру'
+              gameStore.currentQuestionIndex < questions.length - 1
+                ? 'Следующий вопрос'
+                : 'Завершить игру'
             }}
           </AppButton>
         </div>
-        <PrizePyramid :current-prize="prize" />
+        <PrizePyramid :current-prize="gameStore.prize" />
       </div>
     </div>
 

@@ -1,6 +1,7 @@
 import { ref, onMounted, Ref } from 'vue'
 import { useLocalStorage } from '@vueuse/core'
 import type { Question } from '@/types/game'
+import { omit } from 'es-toolkit'
 
 interface UseQuestionsReturn {
   questions: Ref<Question[]>
@@ -36,10 +37,7 @@ export function useQuestions(): UseQuestionsReturn {
         throw new Error('No questions received from server')
       }
 
-      const questionsWithoutAnswers = data.questions.map((q: Question) => ({
-        ...q,
-        answers: []
-      }))
+      const questionsWithoutAnswers = data.questions.map((q: Question) => omit(q, ['answers']))
 
       storedQuestions.value = questionsWithoutAnswers
 

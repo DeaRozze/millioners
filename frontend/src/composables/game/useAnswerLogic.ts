@@ -2,7 +2,7 @@ import { PRIZE_STEPS } from '@/constants/game'
 import { ref, type Ref } from 'vue'
 import { useSoundStore } from '@/stores/soundStore'
 import type { Question, Answer } from '@/types/game'
-import type { useGameStore } from '@/stores/gameStore'
+import { useGameStore } from '@/stores/gameStore'
 
 interface UseAnswerLogicProps {
   questions: Ref<Question[]>
@@ -10,10 +10,11 @@ interface UseAnswerLogicProps {
   gameStore: ReturnType<typeof useGameStore>
 }
 
-export function useAnswerLogic({ questions, hiddenAnswers, gameStore }: UseAnswerLogicProps) {
+export function useAnswerLogic({ questions, hiddenAnswers}: UseAnswerLogicProps) {
   const isProcessing = ref(false)
   const showResultModal = ref(false)
   const soundStore = useSoundStore()
+  const gameStore = useGameStore()
 
   const getAnswerClass = (answer: Answer): string => {
     if (hiddenAnswers?.value?.includes(answer.id)) return 'answer--hidden'

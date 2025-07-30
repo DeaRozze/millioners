@@ -139,7 +139,7 @@ onUnmounted(() => {
 
     <AppModal v-model="showResultModal">
       <div class="result-modal">
-        <h2 class="result-modal__title">Не правильный ответ! Вы проиграли!</h2>
+        <h2 class="result-modal__title">Неправильный ответ! Вы проиграли!</h2>
         <div class="result-modal__buttons">
           <AppButton @click="playAgain">Играть снова</AppButton>
           <router-link :to="ROUTE_PATHS.HOME">

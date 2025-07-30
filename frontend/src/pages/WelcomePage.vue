@@ -61,7 +61,9 @@ onUnmounted(() => {
         </router-link>
         <AppButton @click="isRulesModalOpen = true">Правила игры</AppButton>
         <AppButton @click="isSettingsModalOpen = true">Настройки</AppButton>
-        <AppButton @click="openAuthModal">Войти/Регистрация</AppButton>
+        <AppButton @click="openAuthModal">
+          {{ authStore.isAuthenticated ? 'Сменить аккаунт' : 'Войти/Регистрация' }}
+        </AppButton>
       </div>
     </div>
 

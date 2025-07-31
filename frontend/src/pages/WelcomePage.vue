@@ -75,6 +75,9 @@ onUnmounted(() => {
         <li>3 подсказки: 50/50, звонок другу, помощь зала</li>
       </ul>
     </AppModal>
+    <router-link :to="ROUTE_PATHS.RESULT">
+      <AppButton>Тест страницы результата</AppButton>
+    </router-link>
 
     <AppModal v-model="isSettingsModalOpen">
       <h2 class="modal-title">Настройки</h2>

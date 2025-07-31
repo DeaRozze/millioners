@@ -38,6 +38,7 @@ const { getAnswerClass, selectAnswer, showResultModal } = useAnswerLogic({
 const checkCurrentQuestion = (): void => {
   const gameFinished = gameStore.currentQuestionIndex >= questions.value.length - 1
   if (gameFinished) {
+    soundStore.stopAll()
     gameStore.resetGameState()
     return
   }
@@ -139,9 +140,41 @@ onUnmounted(() => {
 
     <AppModal v-model="showResultModal">
       <div class="result-modal">
-        <h2 class="result-modal__title">Неправильный ответ! Вы проиграли!</h2>
+        <h2
+          class="result-modal__title"
+          :class="{
+            'result-modal__title--win': gameStore.currentQuestionIndex === questions.length - 1,
+            'result-modal__title--lose': gameStore.currentQuestionIndex < questions.length - 1,
+          }"
+        >
+          {{
+            gameStore.currentQuestionIndex === questions.length - 1
+              ? 'Поздравляем! Вы выиграли!'
+              : 'Неправильный ответ! Вы проиграли!'
+          }}
+        </h2>
         <div class="result-modal__buttons">
-          <AppButton @click="playAgain">Играть снова</AppButton>
+          <router-link
+            :to="
+              gameStore.currentQuestionIndex === questions.length - 1
+                ? ROUTE_PATHS.RESULT
+                : ROUTE_PATHS.GAME
+            "
+          >
+            <AppButton
+              @click="
+                gameStore.currentQuestionIndex === questions.length - 1
+                  ? resetToHomeState()
+                  : playAgain()
+              "
+            >
+              {{
+                gameStore.currentQuestionIndex === questions.length - 1
+                  ? 'Посмотреть результат'
+                  : 'Играть снова'
+              }}
+            </AppButton>
+          </router-link>
           <router-link :to="ROUTE_PATHS.HOME">
             <AppButton @click="resetToHomeState">На главную</AppButton>
           </router-link>
@@ -313,8 +346,15 @@ onUnmounted(() => {
 
   &__title {
     font-size: var(--font-size-xxl);
-    color: #f44336;
     margin-bottom: var(--spacing-xl);
+
+    &--win {
+      color: #4caf50;
+    }
+
+    &--lose {
+      color: #f44336;
+    }
   }
 
   &__buttons {

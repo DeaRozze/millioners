@@ -3,11 +3,12 @@ import { useSound } from '@vueuse/sound'
 import { useLocalStorage } from '@vueuse/core'
 import mainTheme from '@/assets/sounds/main-theme.mp3'
 import gameTheme from '@/assets/sounds/game-theme.mp3'
+import resultTheme from '@/assets/sounds/result-theme.mp3'
 import correctSound from '@/assets/sounds/correct-answer.mp3'
 import wrongSound from '@/assets/sounds/wrong-answer.mp3'
 import { ref, watch } from 'vue'
 
-type SoundTrack = 'main' | 'game' | ''
+type SoundTrack = 'main' | 'game' | 'result' | ''
 
 export const useSoundStore = defineStore('sound', () => {
   const volume = useLocalStorage('volume', 0.5)
@@ -24,6 +25,7 @@ export const useSoundStore = defineStore('sound', () => {
   const backgroundMusic = {
     main: useSound(mainTheme, { volume: volume.value, interrupt: true, loop: false }),
     game: useSound(gameTheme, { volume: volume.value, interrupt: true, loop: true }),
+    result: useSound(resultTheme, { volume: volume.value, interrupt: true, loop: false }),
   }
 
   watch(volume, (newVolume) => {
@@ -36,16 +38,19 @@ export const useSoundStore = defineStore('sound', () => {
   const playCorrectSound = () => soundEffectsEnabled.value && soundEffects.correct.play()
   const playWrongSound = () => soundEffectsEnabled.value && soundEffects.wrong.play()
 
-  const playTrack = (track: 'main' | 'game') => {
+  const playTrack = (track: 'main' | 'game' | 'result') => {
     if (!backgroundMusicEnabled.value) return
     stopAll()
-    backgroundMusic[track].play()
-    currentTrack.value = track
-    isGameMusicPaused.value = false
+    if (backgroundMusic[track]) {
+      backgroundMusic[track].play()
+      currentTrack.value = track
+      isGameMusicPaused.value = false
+    }
   }
 
   const playMain = () => playTrack('main')
   const playGame = () => playTrack('game')
+  const playResult = () => playTrack('result')
 
   const pauseGameMusic = () => {
     backgroundMusic.game.pause()
@@ -74,6 +79,7 @@ export const useSoundStore = defineStore('sound', () => {
     isGameMusicPaused,
     playMain,
     playGame,
+    playResult,
     pauseGameMusic,
     resumeGameMusic,
     playCorrectSound,

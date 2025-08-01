@@ -17,6 +17,14 @@ router.post("/register", async (c) => {
       return c.json({ error: "Требуются имя пользователя и пароль" }, 400);
     }
 
+    if (username.length < 3) {
+      return c.json({ error: "Имя должно быть не менее 3 символов" }, 400);
+    }
+
+    if (password.length < 6) {
+      return c.json({ error: "Пароль должен быть не менее 6 символов" }, 400);
+    } 
+
     if (users.has(username)) {
       return c.json({ error: "Имя пользователя уже существует" }, 400);
     }

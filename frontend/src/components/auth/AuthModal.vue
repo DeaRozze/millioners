@@ -30,7 +30,33 @@ const delayedAuthSuccessAction = (): void => {
   }, 1500)
 }
 
+const validateForm = (): boolean => {
+  if (!authStore.formData.name.trim()) {
+    error.value = 'Имя пользователя обязательно'
+    return false
+  }
+
+  if (authStore.formData.name.length < 3) {
+    error.value = 'Имя должно быть не менее 3 символов'
+    return false
+  }
+
+  if (!authStore.formData.password) {
+    error.value = 'Пароль обязателен'
+    return false
+  }
+
+  if (authStore.formData.password.length < 6) {
+    error.value = 'Пароль должен быть не менее 6 символов'
+    return false
+  }
+
+  return true
+}
+
 const submitAuthForm = async (): Promise<void> => {
+  if (!validateForm()) return
+
   isLoading.value = true
   error.value = ''
 

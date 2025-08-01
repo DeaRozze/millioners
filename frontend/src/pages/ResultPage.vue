@@ -10,14 +10,14 @@ const gameStore = useGameStore()
 const authStore = useAuthStore()
 const soundStore = useSoundStore()
 
-const playAgain = () => {
+const playAgain = ():void => {
   soundStore.stopAll()
   gameStore.resetGameState()
   gameStore.resetGameState()
-  soundStore.playGame() 
+  soundStore.playGame()
 }
 
-const resetToHomeState = () => {
+const resetToHomeState = ():void => {
   soundStore.stopAll()
   gameStore.resetGameState()
   soundStore.playMain()

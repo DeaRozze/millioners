@@ -14,9 +14,9 @@ app.use(
   cors({
     origin: (origin) => {
       if (!origin) return null;
-
       const allowedOrigins = [
         "http://localhost:5173",
+        "https://millioners-*.vercel.app",
         "https://millioners.vercel.app",
       ];
 
@@ -30,6 +30,7 @@ app.use(
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
+    maxAge: 86400
   })
 );
 

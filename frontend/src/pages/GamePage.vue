@@ -11,9 +11,11 @@ import { ROUTE_PATHS } from '@/constants/routes'
 import { useGameHints } from '@/composables/game/useGameHints'
 import { useSoundStore } from '@/stores/soundStore'
 import type { Question as QuizQuestion } from '@/types/game'
+import { useRouter } from 'vue-router'
 
 const soundStore = useSoundStore()
 const gameStore = useGameStore()
+const router = useRouter()
 
 const showExitConfirmation = ref(false)
 
@@ -39,7 +41,7 @@ const checkCurrentQuestion = (): void => {
   const gameFinished = gameStore.currentQuestionIndex >= questions.value.length - 1
   if (gameFinished) {
     soundStore.stopAll()
-    gameStore.resetGameState()
+    router.push(ROUTE_PATHS.RESULT)
     return
   }
 

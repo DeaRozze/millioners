@@ -13,6 +13,7 @@ const soundStore = useSoundStore()
 const playAgain = () => {
   soundStore.stopAll()
   gameStore.resetGameState()
+  gameStore.resetGameState()
   soundStore.playGame() 
 }
 

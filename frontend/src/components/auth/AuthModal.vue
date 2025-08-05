@@ -377,4 +377,24 @@ const signalAvatarError = (): void => {
     background: rgba(var(--color-primary), 0.2);
   }
 }
+@media (max-width: 768px) {
+  .auth-modal {
+    &__form {
+      width: 100%;
+    }
+
+    &__title {
+      font-size: var(--font-size-lg);
+    }
+
+    .avatar-upload-group {
+      margin-top: var(--spacing-md);
+    }
+
+    .avatar-preview-wrapper {
+      width: 100px;
+      height: 100px;
+    }
+  }
+}
 </style>

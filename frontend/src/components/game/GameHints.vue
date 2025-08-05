@@ -118,4 +118,10 @@ const audienceHelpTooltip = ref<boolean>(false)
     }
   }
 }
+@media (max-width: 768px) {
+  .game-hints {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
 </style>

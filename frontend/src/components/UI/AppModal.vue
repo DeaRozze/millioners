@@ -84,4 +84,11 @@ onClickOutside(modalContentRef, () => {
 .fade-leave-to {
   opacity: 0;
 }
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    padding: var(--spacing-lg);
+    max-height: 90vh;
+  }
+}
 </style>

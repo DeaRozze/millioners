@@ -212,4 +212,23 @@ onUnmounted(() => {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
+
+@media (max-width: 768px) {
+  .welcome-page {
+    padding: var(--spacing-md);
+  }
+
+  .welcome-page__header {
+    position: static;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .welcome-page__content {
+    padding: var(--spacing-md);
+  }
+
+  .welcome-page__buttons {
+    max-width: 100%;
+  }
+}
 </style>

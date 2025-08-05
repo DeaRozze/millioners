@@ -10,14 +10,14 @@ const gameStore = useGameStore()
 const authStore = useAuthStore()
 const soundStore = useSoundStore()
 
-const playAgain = ():void => {
+const playAgain = (): void => {
   soundStore.stopAll()
   gameStore.resetGameState()
   gameStore.resetGameState()
   soundStore.playGame()
 }
 
-const resetToHomeState = ():void => {
+const resetToHomeState = (): void => {
   soundStore.stopAll()
   gameStore.resetGameState()
   soundStore.playMain()
@@ -240,6 +240,19 @@ onUnmounted(() => {
     opacity: 0;
     top: 100%;
     transform: rotate(360deg) scale(0.5);
+  }
+}
+@media (max-width: 768px) {
+  .result-page {
+    padding: var(--spacing-md);
+  }
+
+  .result-page__content {
+    padding: var(--spacing-md);
+  }
+
+  .result-page__prize {
+    font-size: 3rem;
   }
 }
 </style>

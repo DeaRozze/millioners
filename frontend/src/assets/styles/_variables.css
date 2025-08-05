@@ -4,28 +4,48 @@
   --color-text: #ffffff;
   --color-bg: #121212;
 
-  /* Размеры шрифтов */
   --font-size-xxl: 2.5rem;
-  /* Главный заголовок */
   --font-size-xl: 2rem;
-  /* Заголовки */
   --font-size-lg: 1.5rem;
-  /* Подзаголовки */
   --font-size-md: 1.25rem;
-  /* Обычный текст */
   --font-size-sm: 1rem;
-  /* Мелкий текст */
 
-  /* Отступы (spacing) */
   --spacing-xxl: 3rem;
   --spacing-xl: 2rem;
   --spacing-lg: 1.5rem;
   --spacing-md: 1rem;
   --spacing-sm: 0.5rem;
 
-  /* Эффекты */
   --border-radius: 8px;
   --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
+  --responsive-font-size-xxl: 2rem;
+  --responsive-font-size-xl: 1.75rem;
+  --responsive-font-size-lg: 1.25rem;
+  --responsive-font-size-md: 1rem;
+  --responsive-font-size-sm: 0.875rem;
+
+  --responsive-spacing-xxl: 2rem;
+  --responsive-spacing-xl: 1.5rem;
+  --responsive-spacing-lg: 1rem;
+  --responsive-spacing-md: 0.75rem;
+  --responsive-spacing-sm: 0.25rem;
+
   --z-index-modal: 1000;
+}
+
+@media (max-width: 768px) {
+  :root {
+    --font-size-xxl: var(--responsive-font-size-xxl);
+    --font-size-xl: var(--responsive-font-size-xl);
+    --font-size-lg: var(--responsive-font-size-lg);
+    --font-size-md: var(--responsive-font-size-md);
+    --font-size-sm: var(--responsive-font-size-sm);
+
+    --spacing-xxl: var(--responsive-spacing-xxl);
+    --spacing-xl: var(--responsive-spacing-xl);
+    --spacing-lg: var(--responsive-spacing-lg);
+    --spacing-md: var(--responsive-spacing-md);
+    --spacing-sm: var(--responsive-spacing-sm);
+  }
 }

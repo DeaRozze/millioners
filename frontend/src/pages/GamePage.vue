@@ -409,4 +409,30 @@ onUnmounted(() => {
   text-align: center;
   font-size: var(--font-size-lg);
 }
+
+@media (max-width: 768px) {
+  .game-page {
+    padding: var(--spacing-md);
+  }
+
+  .game-page__layout {
+    flex-direction: column;
+    gap: var(--spacing-lg);
+  }
+
+  .game-page__answers {
+    grid-template-columns: 1fr;
+  }
+
+  .game-page__header {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    align-items: flex-start;
+  }
+
+  .game-page__prize-info {
+    text-align: left;
+    width: 100%;
+  }
+}
 </style>
